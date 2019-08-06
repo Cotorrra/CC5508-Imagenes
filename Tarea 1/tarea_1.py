@@ -1,21 +1,13 @@
 import argparse
-
-def encode(img, txt):
-    print('Woy a encodear: '+img+' con lo siguiente: '+txt)
-
-def decode(file):
-    print('Woy a decodear: '+file)
-
+import encode
+import decode
 
 '''
-
 --encode: indica que la tarea es codificar un texto de entrada dentrode una imagen. 
 La imagen resultante tiene el mismo nombre que el de la imagen de entrada más el prefijo out. 
 La extensión es la misma que la de la imagen de entrada.
-[Por ahora sólo debo llamar a encode, con los argumentos necesarios.]
 
 --decode: indica que la tarea es decodificar una imagen, en este caso se mostrará el texto oculto.
-[Por ahora solo debo llamar a decode con los argumentos necesarios.]
 
 --nbits <N>: indica el número de bits menos significativos a ser usado.
 N toma un valor entre entre 1 y 8, inclusive. Este argumento esusado en el modo encode.
@@ -28,14 +20,30 @@ Este argumento es usado en el modoenconde.
 '''
 
 
-parser = argparse.ArgumentParser(description='Procesa imágenes para codificar/decodificar un mensaje dentro de ésta.')
+parser = argparse.ArgumentParser(description='Lo k ase')
 
-parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                    help='an integer for the accumulator')
-parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
+command_group = parser.add_mutually_exclusive_group()
+command_group.add_argument('--encode', help='Codifica la imagen dada', action="store_true")
+command_group.add_argument('--decode', help='Decodifica la imagen dada', action="store_true")
+parser.add_argument('--image', action="store", type=str, nargs=1, required=True,
+                    help='Indica la imagen sobre la que se codificará/decodificará un texto')
+parser.add_argument('--text', action="store", type=str, nargs=1, default="",
+                    help='Indica el archivo que contiene el texto a codificar.')
+parser.add_argument('--nbits', action="store", type=int, nargs=1, default=1,
+                    help='Cantidad de bits menos significativos en la que se va codificar')
 
 args = parser.parse_args()
+image = args.image[0]
 
-print(args.accumulate(args.integers))
+if args.encode:
+    text = args.text[0]
+    bits = args.nbits[0]
+    if bits > 8 or bits < 1:
+        raise ValueError("--nbits tiene que ser un entero entre 1 y 8")
+
+    encode.encode_image(image, text, bits)
+    exit(0)
+
+if args.decode:
+    decode.decode_image(image)
+    exit(0)
