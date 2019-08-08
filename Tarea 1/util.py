@@ -99,3 +99,15 @@ def toInt(string):
     :return: Entero
     """
     return int(string, 2)
+
+def last_value(number, bits):
+    """
+    Calcula el valor de los n-ésimos bits
+    menos significativos de un número.
+    :param number: Numero a calcular
+    :param bits: bits menos signicativos
+    :return:
+    """
+    return_number = util.toBinary(number)
+    return_number = util.toInt(return_number[len(return_number)-bits:])
+    return return_number
