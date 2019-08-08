@@ -45,7 +45,7 @@ def text_to_ascii(text):
     """
     Transforma un texto a un arreglo de numeros donde cada elemento
     del arreglo es una letra del texto.
-    :param string: texto a transcribir.
+    :param text: texto a transcribir.
     :return: list(int): lista de enteros
     """
     return_list = []
@@ -79,20 +79,22 @@ def read_file(filename):
     file.close()
     return return_string
 
-def toBinary(number):
+
+def to_binary(number):
     """
-    Convierte un numero a un string binario de 7 caracteres.
+    Convierte un numero a un string binario de 8 caracteres.
     :param number: Numero a convertir
     :return: String binario:
     Ej: 101 -> "1100101"
         5   -> "0000101"
     """
-    binary = bin(number)[2:] # bin retorna '0bX...X'
-    while len(binary) < 7:
+    binary = bin(number)[2:]  # bin retorna '0bX...X'
+    while len(binary) < 8:
         binary = "0" + binary
     return binary
 
-def toInt(string):
+
+def to_int(string):
     """
     Convierte un string binario a un entero.
     :param string: String binario (0's y 1's)
@@ -100,10 +102,11 @@ def toInt(string):
     """
     return int(string, 2)
 
+
 def last_value(number, bits):
     """
-    Calcula el valor de los n-ésimos bits
-    menos significativos de un número.
+    Calcula el valor de los n-esimos bits
+    menos significativos de un numero.
     :param number: Numero a calcular
     :param bits: bits menos signicativos
     :return:

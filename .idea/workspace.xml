@@ -3,9 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="05501aff-fa88-4dfc-a6f7-6ba611024fb4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/Tarea 1/Informe/paper base.tex" beforeDir="false" afterPath="$PROJECT_DIR$/Tarea 1/Informe/paper base.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tarea 1/decode.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tarea 1/decode.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tarea 1/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tarea 1/util.py" afterDir="false" />
+=======
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +31,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/aux2" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -100,9 +103,14 @@
       <option name="presentableId" value="Default" />
       <updated>1565064377586</updated>
       <workItem from="1565064379630" duration="529000" />
+<<<<<<< Updated upstream
       <workItem from="1565097180784" duration="7773000" />
       <workItem from="1565232940654" duration="3588000" />
       <workItem from="1565277253647" duration="3813000" />
+=======
+      <workItem from="1565097180784" duration="7019000" />
+      <workItem from="1565203090219" duration="1453000" />
+>>>>>>> Stashed changes
     </task>
     <task id="LOCAL-00001" summary="Console check is done!">
       <created>1565112643608</created>
