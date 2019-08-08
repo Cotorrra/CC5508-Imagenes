@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="05501aff-fa88-4dfc-a6f7-6ba611024fb4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tarea 1/Informe/paper base.tex" beforeDir="false" afterPath="$PROJECT_DIR$/Tarea 1/Informe/paper base.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tarea 1/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tarea 1/util.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -98,6 +100,7 @@
       <updated>1565064377586</updated>
       <workItem from="1565064379630" duration="529000" />
       <workItem from="1565097180784" duration="7773000" />
+      <workItem from="1565232940654" duration="3588000" />
     </task>
     <task id="LOCAL-00001" summary="Console check is done!">
       <created>1565112643608</created>

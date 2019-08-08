@@ -1,6 +1,5 @@
 import skimage.io as skio
 import numpy as np
-import basis
 
 
 def image_read(filename, as_gray=False):
@@ -42,7 +41,7 @@ def image_write(filename, image):
     skio.imsave(filename, image)
 
 
-def text_to_ascii(string):
+def text_to_ascii(text):
     """
     Transforma un texto a un arreglo de numeros donde cada elemento
     del arreglo es una letra del texto.
@@ -50,8 +49,8 @@ def text_to_ascii(string):
     :return: list(int): lista de enteros
     """
     return_list = []
-    for i in range(len(text)):
-        return_list += [ord(text[i])]
+    for i in text:
+        return_list += [ord(i)]
     return return_list
 
 
@@ -71,7 +70,7 @@ def ascii_to_text(list):
 
 def read_file(filename):
     """
-    Lee un archivo de texto y retorna un string con todo el texto en este.
+    Lee un archivo de texto y retorna un string con el texto en este.
     :param filename: direccion del texto
     :return: texto
     """
@@ -80,3 +79,23 @@ def read_file(filename):
     file.close()
     return return_string
 
+def toBinary(number):
+    """
+    Convierte un numero a un string binario de 7 caracteres.
+    :param number: Numero a convertir
+    :return: String binario:
+    Ej: 101 -> "1100101"
+        5   -> "0000101"
+    """
+    binary = bin(number)[2:] # bin retorna '0bX...X'
+    while len(binary) < 7:
+        binary = "0" + binary
+    return binary
+
+def toInt(string):
+    """
+    Convierte un string binario a un entero.
+    :param string: String binario (0's y 1's)
+    :return: Entero
+    """
+    return int(string, 2)

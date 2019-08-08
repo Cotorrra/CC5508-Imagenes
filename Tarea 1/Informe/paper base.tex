@@ -12,7 +12,7 @@
 \newtheorem{lema}{Lema}[section]
 \begin{document}
 
-\title{Análisis adaptativo de Tree Edit Distance}
+\title{Tarea 1 }
 \author{Joaquín Ignacio Pérez Araya\footnotemark \\ Departamento de Ciencias de la Computación, \\ Facultad de Ciencias Físicas y Matemáticas, Universidad de Chile.}
 \footnotetext{Contacto: joaquin.perez.a@ug.uchile.cl}
 \date{\today}
@@ -21,113 +21,14 @@
 \maketitle
 
 \begin{abstract}
-Dentro de este documento se abordará el problema de la distancia de edición entre árboles. Primero se mencionará la historia del problema, luego, en qué tipos de árboles se ha desarrollado el problema para más adelante formular el problema. Después se da una solución al problema simple y se hace un pequeño análisis adaptativo para árboles k-aros completos para finalmente plantear algunos problemas que se podrían abordar en otras investigaciones.
 
 \end{abstract}
 
-\section{Trasfondo} 
-Los árboles en ciencias de la computación son un tipo abstracto de datos muy común que se utilizan hoy en día en la verificación automática de teoremas \cite{AP1}, modelación de estructuras químicas \cite{AP2}, análisis de estructuras secundarias de RNA \cite{AP3,AP4}, comparación de datos jerárquicamente estructurados como XML o json \cite{AP5}, entre otros.
-
-En 1974, Wagner y Fischer \cite{String} plantearon el cálculo de la Distancia de Edición entre dos Strings, este problema consistía en calcular la cantidad mínima de operaciones básicas (Intercambiar, Borrar e Insertar) que se deben aplicar en los \textit{símbolos} de uno de los dos Strings para convertirlo en el otro. Posteriormente en 1979, Tai \cite{TED1} llevó el problema utilizando árboles y dejando el problema anterior como un caso especial.
-
-Actualmente la Distancia de Edición de Árboles (Tree Edit Distance, TED) se ha abordado bajo diferentes instancias de árboles: árboles con raíz \cite{TED1,TED2,TED3,TED4,TED5,TED7,TED8}, árboles sin raíz \cite{TED6},  árboles ordenados \cite{TED1,TED2,TED8}, árboles semi-ordenados \cite{TED3} y árboles no ordenados \cite{TED7}. Actualmente para el caso ordenado se ha logrado obtener un algoritmo que corre en tiempo $O(n^3)$  en el peor caso por Demaine \cite{TED4} (con $n$ siendo el tamaño del árbol más grande), aunque según Bringmann et al., es poco probable que dicha cota se reduzca a sub-cúbica\cite{TED10}. Para instancias semi-ordenadas, Ouangraoua et al. \cite{TED3} tiene un algoritmo que funciona en tiempo polinomial. Sin embargo, el problema para instancias no ordenadas se vuelve NP-Completo \cite{TED9}.
-
-Antes de entrar a formalizar el problema se presenta la notación \footnotemark \ a utilizar: Sea $T$ un árbol, la cantidad de nodos de $T$ es $|T|$. Si $v$ es un nodo de $T$, entonces $\sigma(v)$ es el rótulo de $v$, denominaremos a $\Sigma$ como el conjunto finito que contiene a todos los símbolos que pueden asociar a un nodo.
-\footnotetext{Principalmente se utiliza la notación utilizada en Demaine et al. \cite{TED4} y Schwarz et al. \cite{TED5}.}
-\\
-Sea $F$ un árbol, diremos que $F$ está \textbf{ordenado} si para todo nodo intermedio, de izquierda a derecha todas las etiquetas de los hijos están en una relación de orden \cite{TED2}, está \textbf{semi-ordenado} si entre hermanos de un nodo, éstos están en una relación de orden parcial \cite{TED3} y finalmente \textbf{no ordenado} si, no existe una relación de orden entre los nodos de dicho árbol \cite{TED7}.
-\\
-Un Bosque es un grafo dirigido sin ciclos, donde cada componete conexo es un árbol, notar que un único árbol es un bosque. El bosque o árbol vacío se escribirá como $\emptyset$. Sea $F$ un bosque, $|F|$ es la cantidad de nodos de $F$, si $v$ es un nodo, entonces $F-v$ es el bosque que resulta de eliminar el nodo $v$, especialmente $F-raiz(F)$ se denomina $F^o$. Los árboles del extremo izquierdo y extremo derecho de un bosque se denominan $L_F$ y $R_F$ con sus raíces $l_F$ y $r_F$ respectivamente. Dado dos bosques $F$ y $G$, dos nodos $v\in F$ y $w\in G$, el coste de insertar o eliminar $v$ se escribe como $c_{del}(\sigma(v))=c_{del}(v)$ y $c_{match}(\sigma(v),\sigma(w))=c_{match}(v,w)$ como el coste de renombrar el símbolo de $v$ al símbolo de $w$.
-
-Formalmente, la Distancia de Edición de Árboles consiste en dado dos árboles $F$ y $G$, determinar la cantidad mínima de operaciones básicas ($\delta(F,G)$) que se deben aplicar a los nodos uno de los dos árboles para obtener el otro. Las operaciones definidas por Tai \cite{TED1} son: \textbf{Renombrar}: cambia el símbolo de un nodo $v$ a otro de $\Sigma$, \textbf{Borrar}: elimina un nodo no raíz $v$ de $T$ con padre $v^\prime$, dejando todos los hijos de $v$, como hijos de $v^\prime$ e \textbf{Insertar}: agrega un nodo rotulado nuevo $v$ como hijo de $v^\prime$, haciendo a $v$ el padre de una sub-secuencia consecutiva de los hijos de $v^\prime$, manteniendo el orden entre los nodos.
-De aquí en adelante consideraremos sólo árboles ordenados.
-
-\section{Solución y Análisis adaptativo}
-
-\subsection{Algoritmo de Zhang y Shasha}
-Las soluciones actuales son mediante programación dinámica en bosques derivados de los árboles originales, dividiendo el problema original a sub-bosques más pequeños para realizar el cálculo. Consideremos el algoritmo de Zhang y Shasha \cite{TED8} que está reflejado en el siguiente lema:
-\begin{lema}
-\textbf{(Algoritmo de Zhang y Shasha)}\cite{TED8}: Sea $F$ y $G$ árboles, $\delta(F,G)$ se computa de la siguiente forma:
-\begin{itemize}
-\item $\delta(\emptyset,\emptyset)=0$
-\item $\delta(F,\emptyset)=\delta(F-r_F,\emptyset)+c_{del}(r_F)$
-\item $\delta(\emptyset,G)=\delta(\emptyset,G-r_G)+c_{del}(r_G)$
-\item 
-$\begin{aligned}
-\delta(F,G)=min
-\begin{cases}
-\delta(F-r_F,G)+c_{del}(r_F), \\
-\delta(F,G-r_G)+c_{del}(r_G), \\
-\delta(R^o_F,R^o_G)+ \delta(F-R_F,G-R_G)+ c_{match}(r_F,r_G)
-\end{cases}
-\end{aligned}
-$
-\end{itemize}
-\end{lema}
-Este simple algoritmo funciona bajo recursividad generando sub-árboles bajo los casos: se elimina un nodo de $F$, un nodo de $G$ o se intercambia una etiqueta, calculando la distancia de edición de todos los posibles sub-bosques y retornando la mínima entre todas.
-La complejidad temporal del algoritmo es de \cite{TED8}: 
-$$O(|F| \times |G| \times  min(h(F),p(F))\times min(h(G),p(G))$$
-Donde $p(F)$ es la profundidad de $F$ y $h(F)$ la cantidad de hojas, lo que lleva a ser un algoritmo $O(|F|^2\times |G|^2) \to O(n^4)$. 
-
-El método de resolución se basa iterando por los sub-árboles derechos de los bosques generados, aunque sin pérdida de generalidad se puede por los sub-árboles izquierdos, es decir usar $L_F$ y $l_F$ en vez de $R_F$ y $l_F$ según corresponda.
-
-\subsection{Análisis adaptativo bajo árboles k-aros completos}
-Los árboles k-arios completos, son árboles en donde sus nodos siempre tienen a lo más k hijos y es eficiente en el uso de espacio, es decir todas las hojas están como máximo uno menos de la profundidad del árbol. 
-Sea $F$ un árbol k-ario completo, las hojas éste están acotadas superiormente por la profundidad de cada árbol en $p(F)\times k$, así $min(h(F),p(F))\leq min(p(F)\times k,p(F))=p(F)$ por lo que la complejidad se cambia a:
-$$O(|F| \times |G| \times p(F)\times p(G))$$
-Además, la profundidad en éstos árboles\footnotemark \ es de $p(F)=\lceil log_k((k-1)\times |F|+1)-1 \rceil \leq log_k((k-1)\times |F|+1) = log_k(k-1)+log_k(|F|+1) < 1 + log_k(|F|+1) \to O(log_k(|F|))$ , por lo que reemplazando:
-\footnotetext{Se puede deducir la profundidad dado que el árbol es k-ario perfecto, siempre se cumple que $\frac{k^{p(F)}-1}{k-1}<|F|\leq \frac{k^{p(F)+1}-1}{k-1}$.}
-
-$$O(|F| \times |G| \times log_k((|F|\times |G|))\to O(n^2log_k(n^2)) \to O(n^2log_k(n))$$
-
-Por lo que la complejidad de este algoritmo se reduce en árboles k-arios perfectos ordenados, debido a que dentro de éstos, los nodos están bien distribuidos, siendo un caso fácil no trivial de este algoritmo.
-
-\subsection{$\delta(F,G)$ como posible medida de dificultad}
-Usar $\delta(F,G)$ como medida de dificultad a priori parece ser un excelente indicador para el algoritmo, pero resulta poco útil debido a que el algoritmo es avaro y examina todas las rutas posibles, por lo que una mínima edición o una gran edición va a llevar a costes temporales similares.
-
-\section{Problemas extras y propuestas}
-Durante la investigación para esta propuesta salieron los siguientes problemas relacionados:
-\begin{itemize}
-\item ¿Qué tanto cambiaría el problema si, se agrega una operación que permita \textbf{intercambiar} los hijos y los padres de dos nodos?
-\item Resolver distancias de edición de árboles en tipos de árboles específicos: como los árboles AVL, árboles B y árboles 2-3. ¿Estos tipos de árboles permiten tener mejores tiempos como un árbol k-ario completo?
-\item ¿Será posible generalizar el problema a grafos dirigidos? ¿Y a grafos en general?
-\item Los autómatas finitos deterministas son un grafo dirigido con raíz que, junto a una función de transición que permiten describir los Lenguajes Regulares. Considerando las operaciones de \textbf{Insertar} y \textbf{Eliminar} originales más la operación de \textbf{Reescritura} que cambia la función de transición de un determinado nodo/estado. ¿Será posible determinar una distancia de edición en Autómatas?
-\end{itemize}
-
-\section{Conclusiones}
-Dentro de esta mini-propuesta de investigación se introdujo el problema de Distancia de Edición entre árboles, cómo se originó, su complejidad temporal en los diferentes casos, para el caso ordenado un algoritmo simple de implementar más un pequeño análisis adaptativo sobre este algoritmo sobre un tipo específico de árbol y una descartada posible medida de dificultad, para terminar con problemas propuestos a desarrollar.
+\section*{Introducción} % Así la cosa no me molesta con los numeritos.
+    A lo largo de la historia ha existido la necesidad de ocultar mensajes, ya sea transmitir 
 
 \begin{thebibliography}{99}
-
-\bibitem{TED1} Tai, K-C. 1979. The Tree-to-Tree Correction Problem. Journal of the Association for Computing Machm©ry, 26(3): 422-433.
-
-\bibitem{TED2} Bille, P. 2005. A survey on tree edit distance and related problems. Theoretical Computer Science 337(1-3): 217–239.
-
-\bibitem{TED3} Ouangraoua A., Ferraro, P. 2009. A constrained edit distance algorithm between semi-ordered trees. Theoretical Computer Science 410(8–10): 837-846.
-
-\bibitem{TED4} Demaine E.D., Mozes S., Rossman B., Weimann O. 2007. An Optimal Decomposition Algorithm for Tree Edit Distance. In: Arge L., Cachin C., Jurdziński T., Tarlecki A. (eds) Automata, Languages and Programming. ICALP 2007. Lecture Notes in Computer Science, vol 4596. Springer, Berlin, Heidelberg.
-
-\bibitem{TED5} Schwarz S., Pawlik M., Augsten N. 2017. A New Perspective on the Tree Edit Distance. In: Beecks C., Borutta F., Kröger P., Seidl T. (eds) Similarity Search and Applications. SISAP 2017. Lecture Notes in Computer Science, vol 10609. Springer, Cham.
-
-\bibitem{TED6} Klein P.N., 1998. Computing the edit-distance between unrooted ordered trees. In European Symposium on Algorithms (ESA). 
-
-\bibitem{TED7} McVicar M., Benjamin Sach B., Mesnage C., Lijffijt J., Spyropoulou E., De Bie T.> 2016. SuMoTED: An intuitive edit distance between rooted unordered uniquely-labelled trees Pattern Recognition Letters 79: 52-59.
-
-\bibitem{TED8} Zhang K., Shasha D. 1989. Simple fast algorithms for the editing distance between trees and related problems. Siam J. Comput. 18(6): 1245-1262
-
-\bibitem{TED9} Zhang K., 1989. The editing distance between trees: algorithms and applications, Ph.D. thesis, Department
-of Computer Science, Courant Institute of Mathematical Sciences, New York University, New York.
-
-\bibitem{TED10} Bringmann, K., Gawrychowski, P., Mozes, S., Weimann, O. 2017. Tree edit distance cannot be computed in strongly subcubic time (unless APSP can). CoRR, abs/1703.08940.
-
-\bibitem{String}  Wagner, R.A., Fischer, M.J. 1974. The String-to-String Correction Problem. Journal of the ACM (JACM) 21(1): 168–173. 
-
-\bibitem{AP1} Hsiang J., Rusinowitch M. 1991. Proving refutational completeness of theorem-proving strategies: the transfinite semantic tree method, J. ACM (JACM) 38 (3): 558–586.
-\bibitem{AP2} Stobaugh R.E.,(1985). Chemical substructure searching, J. Chem. Inf. Comput. Sci. 25(3):  271–275.
-\bibitem{AP3} T. Jiang, L. Wang, K. Zhang, 1995. Alignment of trees—an alternative to tree edit, Theoret. Comput. Sci. 143.
-\bibitem{AP4} Shapiro B.A., 1998. An algorithm for comparing multiple RNA secondary structures, Comput. Appl. Biosci. (1988), pp. 387-393.
-\bibitem{AP5} Chawathe S., ”Comparing hierarchical data in external memory”. Proceedings of the Twenty-fifth International Conference on Very Large Data Bases (1999), Edinburgh, Scotland, p. 90-101
-\b ibitem{AP6}
+\bibitem{AP6}
 
 
 \end{thebibliography}
