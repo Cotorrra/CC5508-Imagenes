@@ -17,13 +17,13 @@ def decode_image(image):
             ++i
             j = 0
         value = matrix[i, j]
-        curr_bits = acc + util.last_value(value, bits)
-        if len(curr_bits) > 7:
-            if curr_bits == "0000011":
+        curr_bits = acc + str(util.last_value(value, bits))
+        if len(curr_bits) >= 8:
+            if curr_bits[:8] == "00000000":
                 finished = True
-                break
-            char_list += [curr_bits[:7]]
-            acc = curr_bits[7:]
+
+            char_list += [curr_bits[:8]]
+            acc = curr_bits[8:]
         ++j
 
     # Convertir la lista a un string

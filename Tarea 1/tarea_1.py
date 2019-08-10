@@ -45,5 +45,5 @@ if args.encode:
     exit(0)
 
 if args.decode:
-    decode.decode_image(image)
+    print(decode.decode_image(image))
     exit(0)

@@ -18,7 +18,8 @@ def image_read(filename, as_gray=False):
 
 def to_uint8(image):
     """
-    Transforma una arreglo de imagen a uno con
+    Transforma una matriz de imagen a otra que sólo tiene valores
+    enteros sin signo de 8 bits.
     :param image: imagen a procesar
     :return: imagen con solo enteros sin signo de 8bits
     """
@@ -32,7 +33,6 @@ def to_uint8(image):
 
 def image_write(filename, image):
     """
-    image_write: str -> void
     Guarda una imagen en el direccion dada.
     :param filename: direccion para guardar
     :param image: informacion de imagen para guardar
@@ -51,6 +51,7 @@ def text_to_ascii(text):
     return_list = []
     for i in text:
         return_list += [ord(i)]
+    return_list+=[0]
     return return_list
 
 
@@ -111,6 +112,18 @@ def last_value(number, bits):
     :param bits: bits menos signicativos
     :return:
     """
-    return_number = util.toBinary(number)
-    return_number = util.toInt(return_number[len(return_number)-bits:])
+    return_number = to_binary(number)
+    return_number = to_int(return_number[len(return_number)-bits:])
     return return_number
+
+
+def join_strings(s1, s2):
+    """
+    Une dos strings cortando el primero segun el tamaño del segundo.
+    :param s1: string inicio
+    :param s2: string final
+    :return:
+    ej: joins_strings("10101","11") = "10111"
+    """
+    return_string = s1[:len(s1)-len(s2)] + s2
+    return return_string
