@@ -69,7 +69,7 @@ def ascii_to_text(list):
     return return_string
 
 
-def read_file(filename):
+def text_read(filename):
     """
     Lee un archivo de texto y retorna un string con el texto en este.
     :param filename: direccion del texto
