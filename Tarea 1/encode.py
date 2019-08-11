@@ -31,6 +31,7 @@ def encode_image(image, text, bits):
                 acc = b_letter
                 b_letter = ""
 
+
     # Armar la imagen usando esta matriz nueva.
     new_image = image_data
     new_image[:, :, 0] = matrix
