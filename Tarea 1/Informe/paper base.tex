@@ -26,7 +26,7 @@
 \end{abstract}
 
 \section*{Introducción} % Así la cosa no me molesta con los numeritos.
-    A lo largo de la historia ha existido la necesidad de ocultar mensajes a plena vista, ya sea para transmitir información sensible  Ejemplos...
+    A lo largo de la historia de la humanidad ha existido la necesidad de ocultar mensajes a plena vista, ya sea para transmitir información sensible,   Ejemplos...
     Uno de los modos es a través de la Esteganografía, que viene de ...
     En este documento se mencionará una implementación de Esteganografía sobre imagenes ... que consiste en ... la
     ... ejemplos de Esteganografía en imagenes (usar \cite{DIS})
@@ -36,22 +36,33 @@
     tkm
 
 \section*{Desarrollo}
-	Para la implementación del programa se utilizó Python 3.6 con las (librerías) ...
+	Para la implementación del programa se utilizó Python 3.6 con las \texttt{numpy} y     
+	\texttt{scimage}
 	Se dividió el programa en 4 partes: Utilidades, Entrada/Salida, Codificación y Decodificación.
-	\subsection{Utilidades}
+	\subsection*{Utilidades}
+	El módulo de utilidades (\texttt{util.py}) están las funciones auxiliares de las cuales se destacan:
+	\begin{itemize}
+	    \item \texttt{image\_read}\footnotemark, \texttt{image\_write} y \texttt{text\_read}: Son las funciones para leer los archivos externos que se van a utilizar para el proceso de codificación y decodificación.
+         
+	    \footnotetext{La función que está implementada en el código es la que está en \texttt{pai\_io.py} del repositorio del curso.}
+	    	    
+        \item \texttt{text\_to\_ascii} y \texttt{ascii\_to\_text}: La primera se utiliza para codificar el mensaje mientras que la segunda para decodificar. Se usan para transformar una cadena de texto a una lista de números donde cada caracter es un número de la lista y viceversa.
+        
+	\end{itemize}
 	
-	\subsection{Codificación}
+	\subsection*{Codificación}
 	 	La codificación consta de una única función que dado una dirección de imagen, una dirección texto y un número de bits realice todo el proceso de abrir la imagen, y editarla para agregarle la información que corresponde al texto.
 	 
 	
 \section*{Experimentación}
-	Usamos imagenes...
+    Inicialmente para el testeo del funcionamiento inicial de la implementación se utilizó una imagen en negro de \texttt{10x10} pixeles con la finalidad de verificar fácilmente la codificación/decodificación.
 
 \section*{Conclusión}
 	Muy bien me gusto, pongame un 7.0 tkm
 
+
 \begin{thebibliography}{99}
-\bibitem{DIS} Cheddad, A., Condell, J., Curran, K., & Mc Kevitt, P. (2010). Digital image steganography: Survey and analysis of current methods. Signal Processing, 90(3), 727–752. 
+    \bibitem{DIS} Cheddad, A., Condell, J., Curran, K., & Mc Kevitt, P. (2010). Digital image steganography: Survey and analysis of current methods. Signal Processing, 90(3), 727–752. 
 
 
 \end{thebibliography}
