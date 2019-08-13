@@ -51,7 +51,6 @@ def text_to_ascii(text):
     return_list = []
     for i in text:
         return_list += [ord(i)]
-    return_list+=[0]
     return return_list
 
 
