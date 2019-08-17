@@ -1,22 +1,21 @@
-%\documentclass{article}
-\documentclass{article}
-
-%% Paquetes
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
-\usepackage[medium]{titlesec}
-
-%% Definiciones
-\newtheorem{definicion}{Definición}[section]
-\newtheorem{lema}{Lema}[section]
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Tarea 1 }
-\author{Joaquín Ignacio Pérez Araya\footnotemark \\ Departamento de Ciencias de la Computación, \\ Facultad de Ciencias Físicas y Matemáticas, Universidad de Chile.}
-\footnotetext{Contacto: joaquin.perez.a@ug.uchile.cl}
-\date{\today}
+\title{Esteganofrafía}
+
+\author{\IEEEauthorblockN{Joaquín Pérez Araya}
+\IEEEauthorblockA{\textit{Departamento de Ciencias de la Computación} \\
+\textit{Universidad de Chile}\\
+Santiago, Chile \\
+joaquin.perez.a@ug.uchile.cl}}
 
 
 \maketitle
@@ -25,8 +24,8 @@
 
 \end{abstract}
 
-\section*{Introducción} % Así la cosa no me molesta con los numeritos.
-    A lo largo de la historia de la humanidad ha existido la necesidad de ocultar mensajes a plena vista, ya sea para transmitir información sensible, como  Ejemplos...
+\section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
+    A lo largo de la historia de la humanidad ha existido la necesidad de envíar información ocultos, ya sea para transmitir información sensible, como  Ejemplos...
     Uno de los modos es a través de la Esteganografía, que viene de ...
     En este documento se mencionará una implementación de Esteganografía sobre imagenes ... que consiste en ... la
     ... ejemplos de Esteganografía en imagenes (usar \cite{DIS})
@@ -35,24 +34,28 @@
 
     Dentro del texto actúal     
     
-\section*{Desarrollo}
-	Para la implementación del programa se utilizó Python 3.6 con las \texttt{numpy} y     
-	\texttt{scimage}
-	Se dividió el programa en 4 partes: Utilidades, Entrada/Salida, Codificación y Decodificación.
+\section*{Diseño e Implementación}
+	Para la implementación del programa se utilizó Python 3.6 con las librerías \texttt{numpy} y     
+	\texttt{scimage} y \texttt{argparse}. El código está dividido en 4 partes: Utilidades, Entrada/Salida, Codificación y Decodificación.
+\subsection*{Entrada y Salida}
+    Para el uso externo del programa por medio de comandos se utilizó la librería \texttt{argparse} que viene por defecto en Python. Leer los comandos dados y traducirlos a llamados directos a las funciones de codificación o decodificación.
+    	
 	\subsection*{Utilidades}
-	El módulo de utilidades (\texttt{util.py}) están las funciones auxiliares de las cuales se destacan:
+	El módulo de utilidades (\texttt{util.py}) están las funciones auxiliares que utilizan la codificación y decodificación entre las de las cuales se destacan:
 	\begin{itemize}
 	    \item \texttt{image\_read}\footnotemark, \texttt{image\_write} y \texttt{text\_read}: Son las funciones para leer los archivos externos que se van a utilizar para el proceso de codificación y decodificación.
          
-	    \footnotetext{La función que está implementada en el código es la que está en \texttt{pai\_io.py} del repositorio del curso.}
+	    \footnotetext{La función que está implementada en el código es la que está en \texttt{pai\_io.py} dentro del repositorio del curso.}
 	    	    
         \item \texttt{text\_to\_ascii} y \texttt{ascii\_to\_text}: La primera se utiliza para codificar el mensaje mientras que la segunda para decodificar. Se usan para transformar una cadena de texto a una lista de números donde cada caracter es un número de la lista y viceversa.
         
 	\end{itemize}
 	
+    	
+	
 	\subsection*{Codificación}
-	 	La codificación consta de una única función que dado una dirección de imagen, una dirección texto y un número de bits realice todo el proceso de abrir la imagen, y editarla para agregarle la información que corresponde al texto.
-	 
+        La codificación consta de una única función que dado una dirección de imagen, una dirección texto y un número de bits realice todo el proceso de abrir la imagen, y editarla para agregarle la información que corresponde al texto.
+        La codificación mediante
 	
 \section*{Experimentación}
     Inicialmente para el testeo del funcionamiento inicial de la implementación se utilizó una imagen en negro de \texttt{10x10} pixeles con la finalidad de verificar vía simple inspección la codificación/decodificación.
@@ -64,7 +67,8 @@
 
 
 \begin{thebibliography}{99}
-    \bibitem{DIS} Cheddad, A., Condell, J., Curran, K., & Mc Kevitt, P. (2010). Digital image steganography: Survey and analysis of current methods. Signal Processing, 90(3), 727–752. 
+\bibitem{DIS} Cheddad, A., Condell, J., Curran, K., \& Mc Kevitt, P. (2010). Digital image 
+steganography: Survey and analysis of current methods. Signal Processing, 90(3), 727–752. 
 
 
 \end{thebibliography}
