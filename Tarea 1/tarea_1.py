@@ -21,7 +21,7 @@ Este argumento es usado en el modoenconde.
 '''
 
 
-parser = argparse.ArgumentParser(description='Lo k ase')
+parser = argparse.ArgumentParser(description='Codificador/Decodificar de Texto en imágenes.')
 
 command_group = parser.add_mutually_exclusive_group()
 command_group.add_argument('--encode', help='Codifica la imagen dada', action="store_true")

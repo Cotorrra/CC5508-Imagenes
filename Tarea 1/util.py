@@ -6,7 +6,7 @@ def image_read(filename, as_gray=False):
     """
     image_read: str , [bool] -> image[uint8]
     lee una imagen dada su direccion y la retorna.
-    Siempre retorna una matriz de NxMx3/NxMx4/NxM en sin signo enteros de 8bits.
+    Siempre retorna una matriz de NxMx3/NxMx4/NxM en enteros sin signo de 8bits.
     :param filename: direccion para leer
     :param as_gray booleano, si es escala de grises o no.
     """
@@ -116,7 +116,7 @@ def last_value(number, bits):
     return return_number
 
 
-def join_strings(s1, s2):
+def join_binaries(s1, s2):
     """
     Une dos strings cortando el primero segun el tamaño del segundo.
     :param s1: string inicio
@@ -125,4 +125,4 @@ def join_strings(s1, s2):
     ej: joins_strings("10101","11") = "10111"
     """
     return_string = s1[:len(s1)-len(s2)] + s2
-    return return_string
+    return to_int(return_string)

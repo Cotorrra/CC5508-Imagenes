@@ -68,7 +68,7 @@ def ascii_to_text(list):
     return return_string
 
 
-def read_file(filename):
+def text_read(filename):
     """
     Lee un archivo de texto y retorna un string con el texto en este.
     :param filename: direccion del texto
@@ -111,12 +111,12 @@ def last_value(number, bits):
     :param bits: bits menos signicativos
     :return:
     """
-    return_number = util.toBinary(number)
-    return_number = util.toInt(return_number[len(return_number)-bits:])
+    return_number = to_binary(number)
+    return_number = to_int(return_number[len(return_number)-bits:])
     return return_number
 
 
-def join_strings(s1, s2):
+def join_binaries(s1, s2):
     """
     Une dos strings cortando el primero segun el tamaño del segundo.
     :param s1: string inicio
@@ -125,4 +125,4 @@ def join_strings(s1, s2):
     ej: joins_strings("10101","11") = "10111"
     """
     return_string = s1[:len(s1)-len(s2)] + s2
-    return return_string
+    return to_int(return_string)
