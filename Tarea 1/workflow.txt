@@ -1,0 +1,5 @@
+TODO:
+    - Hacer que los comandos tomen funciones y hagan la pega.
+    - Investigar sobre las algoritmos de asdkanfkjshdbglasg.
+    - Programar el análisis real de las cosas
+    - ¿Qué pasa si decodifico texto sin codificar?
