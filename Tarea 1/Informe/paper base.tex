@@ -25,18 +25,15 @@ joaquin.perez.a@ug.uchile.cl}}
 \maketitle
 
 \begin{abstract}
-
+    Dentro del presente documento se tratará la Esteganografía en imágenes, un método de ocultación de mensajes en imágenes, tambien se discutirá el diseño e implementación de un programa que codifica mensajes utilizando los canales de la imagen, finalmente se realizan experimentos utilizando una imagen pequeña y otra grande, junto con textos pequeños y largos, para observar y determinar la cantidad de bits posibles que se pueden utilizar para codificar los mensajes sin perder la calidad visual de la imagen y el rendimiento que se tiene al codificar.
 \end{abstract}
+ 
 
 \section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
-    A lo largo de la historia de la humanidad ha existido la necesidad de envíar información ocultos, ya sea para transmitir información sensible, como  Ejemplos...
-    Uno de los modos es a través de la Esteganografía, que viene de ...
-    En este documento se mencionará una implementación de Esteganografía sobre imagenes ... que consiste en ... la
-    ... ejemplos de Esteganografía en imagenes (usar \cite{DIS})
-    más específicamente un método bastante simple que consiste en...
-    (tablita, algoritmo bonito, blablabla)
-
-    Dentro del texto actúal     
+    A lo largo de la historia de la humanidad ha existido la necesidad de envíar información ocultos, ya sea para transmitir información sensible, como estrategias militares, mensajes de amor o incluso mera diversión.
+    Uno de los modos es a través de la Esteganografía, que se diferencia de la Criptografía donde los mensajes son visibles pero inentendibles, por lo que la Esteganografía se dedica a ocultar mensajes desapercibidamente al ojo humano.
+    Dado por el contexto del curso, se considerarán sólo Esteganografía sobre imágenes, hay variados métodos, con niveles de seguridad variados, desde escribir después del indicador \texttt{EOF} el mensaje a esconder \cite{DIS}, el que fue implementado, hasta utilizar el histograma de la imagen para guardar el contenido del mensaje.
+    En este documento se enfocará sobre una implementación de Esteganografía sobre imagenes, que consiste en codificar los caracteres de un texto a una imagen utilizando uno de sus canales.
     
 \section*{Diseño e Implementación}
 	Para la implementación del programa se utilizó Python 3.6 con las librerías \texttt{numpy}, \texttt{sci-kit-image} y \texttt{argparse}. El código está dividido en 4 partes: Utilidades, Entrada/Salida, Codificación y Decodificación.
@@ -93,12 +90,15 @@ joaquin.perez.a@ug.uchile.cl}}
 \caption{Gráfico que compara la cantidad de pixeles necesarios para codificar un mensaje con bits y cantidad de caracteres fijas.}
 \end{figure}
 	
-	Por lo que no resulta tan beneficioso aumentar la cantidad de bits utilizados dentro de la imagen
+	Por lo que no resulta tan beneficioso aumentar la cantidad de bits utilizados dentro de la imagen.
+   
+   Para experimentar en grande las diferencias entre las diferentes codificaciones, se procedió a codificar el libro Génesis de la Biblia en inglés (189.245 caracteres), en una imagen de un Ave de tamaño \texttt{1242x1279} (1.588.518 pixeles). Las imagenes resultantes están en el anexo, dado la necesidad de espacio visual necesario para distinguir las diferentes codificaciones. La calidad visual no se llega a percibir si se usan 3 o menos bits de codificación, sin embargo es altamente visible la modificación de 4 bits en adelante, de hecho corrobora el efecto decreciento que se muestra en el gráfico, debido a que la distorción del color es notoria en áreas similares de la foto.
+   Las imagenes están disponibles junto con el texto en los archivos que vienen con este informe.
 
 \section*{Conclusión}
-	Muy bien me gustó, póngame un 7.0 tkm.
-
-
+    En la sección anterior se estableció el límite de bits para no comprometer el estado de la imagen, considerando tambien los rendimientos decrecientes de utilizar más bits, los bits recomendados para codificar de forma segura una imagen serían, 2 y 3. La diferencia entre codificar en un bit y en dos es imperceptible, así codificar en un sólo bit se convierte más en una operación el doble de ineficiente si se compara la cantidad de pixeles se que necesitan para codificar el mismo mensaje.  
+    Una de las consideraciones adicionales que se pueden llevar acabo utilizando este método sería el de utilizar más canalaes de la imagen para amplificar la cantidad de texto que se puede codificar, si la imagen fuese en color, ésta cantidad aumentaría al triple.
+    
 \begin{thebibliography}{99}
 \bibitem{DIS} Cheddad, A., Condell, J., Curran, K., \& Mc Kevitt, P. (2010). Digital image 
 steganography: Survey and analysis of current methods. Signal Processing, 90(3), 727–752. 
@@ -106,5 +106,59 @@ steganography: Survey and analysis of current methods. Signal Processing, 90(3),
 
 \end{thebibliography}
 
+\section*{Anexo}
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb.png}
+\caption{Imagen de una Ave normal}
+\end{figure}
 
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb1.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 1 bit.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb2.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 2 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb3.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 3 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb4.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 4 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb5.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 5 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb6.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 6 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb7.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 7 bits.}
+\end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/birb8.png}
+\caption{Imagen de una Ave, codificada con el Génesis en 8 bits}
+\end{figure}
 \end{document}
