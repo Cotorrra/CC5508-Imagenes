@@ -9,8 +9,8 @@ def encode_image(image, text, bits):
 
     b_bits = util.to_binary(bits)
     b_bits = b_bits[len(b_bits)-4:]         # Los bits se pueden codificar en 4 caracteres.
-    b_first = util.to_binary(matrix[0,0])   # Primer valor del canal.
-    matrix[0,0] = util.join_binaries(b_first, b_bits)
+    b_first = util.to_binary(matrix[0, 0])   # Primer valor del canal.
+    matrix[0, 0] = util.join_binaries(b_first, b_bits)
     i = 0
     j = 1
     acc = ""
@@ -19,8 +19,8 @@ def encode_image(image, text, bits):
         acc = ""
         while len(b_letter) > 0:
             encode = b_letter[len(b_letter)-bits:]
-            b_value = util.to_binary(matrix[i,j])
-            matrix[i,j] = util.join_binaries(b_value, encode)
+            b_value = util.to_binary(matrix[i, j])
+            matrix[i, j] = util.join_binaries(b_value, encode)
 
             b_letter = b_letter[:len(b_letter) - bits]
             j = j + 1
