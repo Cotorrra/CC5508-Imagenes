@@ -325,7 +325,7 @@
 \DeclareOption{twoside}{\@twosidetrue\@mparswitchtrue
                         \CLASSOPTIONtwosidetrue\CLASSOPTIONonesidefalse}
 
-\DeclareOption{onecolumn}{\CLASSOPTIONonecolumntrue\CLASSOPTIONtwocolumnfalse}
+\DeclareOption{twocolumn}{\CLASSOPTIONonecolumntrue\CLASSOPTIONtwocolumnfalse}
 \DeclareOption{twocolumn}{\CLASSOPTIONtwocolumntrue\CLASSOPTIONonecolumnfalse}
 
 % If the user selects draft, then this class AND any packages
@@ -371,7 +371,7 @@
 
 
 % default to US letter paper, 10pt, twocolumn, one sided, final, journal
-\ExecuteOptions{letterpaper,10pt, onecolumn,oneside,final,journal}
+\ExecuteOptions{letterpaper,10pt, twocolumn,oneside,final,journal}
 % overrride these defaults per user requests
 \ProcessOptions
 

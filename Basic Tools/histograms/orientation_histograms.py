@@ -1,6 +1,7 @@
 import scipy.ndimage.filters as nd_filters
 import numpy as np
 
+
 def compute_orientation_histogram(image, K):
     h = np.zeros( K, np.float32)
     gx_mask = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
@@ -13,8 +14,8 @@ def compute_orientation_histogram(image, K):
     indx = np.round(K * ang / np.pi) 
     indx[indx ==  K] = 0
     for i in range(K):
-        rows, cols = np.where(indx  == i)        
+        rows, cols = np.where(indx == i)
         h[i] = np.sum(mag[rows, cols])
-    h =  h / np.linalg.norm(h,2)  #vector unitario    
+    h = h / np.linalg.norm(h,2)  #vector unitario
     return h
     

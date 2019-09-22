@@ -8,9 +8,9 @@ import numpy as np
  
 if __name__ == '__main__' :
     #filename = '../images/gray/im_34.png'
-    #filename = '../images/gray/im_2.tif'
+    filenameB = '../images/gray/im_2.tif'
     filenameA = '../images/gray/elephant.jpg'
-    filenameB = '/home/jsaavedr/Documents/Datasets/SBIR/dataset_1/BD_2/chair/180016.jpg'
+    #filenameB = '/home/jsaavedr/Documents/Datasets/SBIR/dataset_1/BD_2/chair/180016.jpg'
     imageA = pai_io.imread(filenameA, as_gray = True)
     imageB = pai_io.imread(filenameB, as_gray = True)
     K = 36
