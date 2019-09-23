@@ -36,7 +36,6 @@ def histogram(image, bins):
 
 
 def helo(image, bins, block_size):
-    image_blocks = view_as_blocks(image, (block_size, block_size))
 
     blocks_x = np.ceil(image.shape[0] / block_size)
     blocks_y = np.ceil(image.shape[1] / block_size)
@@ -59,6 +58,7 @@ def helo(image, bins, block_size):
     b_angles = 0.5 * np.arctan2(L_x, L_y)
     b_angles[b_angles < 0] += np.pi / 2
 
+    # interpolacion lineal
 
     return h
 
@@ -73,6 +73,7 @@ def shielo(image, bins, blocks):
 
 def numbers(a,b):
     return a, b
+
 
 if __name__ == '__main__':
     a = np.array([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],

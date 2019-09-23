@@ -56,10 +56,8 @@ joaquin.perez.a@ug.uchile.cl}}
 	}
 	Notar que las funciones $transpose()$ y $convolve()$, son de los paquetes \texttt{numpy} y \texttt{skimage} respectivamente.
 \end{algorithm}
-		
-	\begin{itemize}
-
-	\item Histograma de Orientaciones Simple:
+	
+	Histograma de Orientaciones Simple:
 	Este se basa en la obtención directa de los ángulos de los vectores gradiente utilizando el arcotangente de la división de ambos, para luego dividir dichos ángulos en los diferentes bins y votar por ellos según la magnitud de los vectores del ángulo.
 	\begin{algorithm}[ht]
 		\caption{Histograma de Orientaciones Simple}	
@@ -86,14 +84,87 @@ joaquin.perez.a@ug.uchile.cl}}
 		
 		\end{algorithm} 
 	
-	\item Histograma de Orientaciones de Bordes Locales (HELO): Calcula los ángulos 
+	Histograma de Orientaciones de Bordes Locales (HELO): Calcula los ángulos 
+    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen, la cantidad de bins $k$, tamaño de los bloques $B$.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$h \longleftarrow zeros(k)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		
+		\end{algorithm} 	
 	
-	\item Histograma de Orientaciones de Bordes Locales Suave (SHELO): 	
+	Histograma de Orientaciones de Bordes Locales Suave (SHELO): 	
+    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen, la cantidad de bins $k$, tamaño de los bloques $B$.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$h \longleftarrow zeros(k)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		
+		\end{algorithm} 	
 	
-	\end{itemize}	    
+	
 \subsection*{Consultas}
-	
-	
+	Para las consultas se aplica el siguiente algoritmo:
+	    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen de consulta, la cantidad de bins $k$ para los histogramas, tamaño de los bloques $B$ para los histogramas.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$database \longleftarrow ReadDatabase()$ \;
+		$size\_db \longleftarrow lenght(database) $ \;
+		$histograms \longleftarrow zeros((size\_db, k))$ \;
+		$distances \longleftarrow zeros(size\_db)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		\end{algorithm} 	
 \section*{Experimentación}
     
 

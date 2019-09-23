@@ -1,20 +1,20 @@
+
 \documentclass[conference]{IEEEtran}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{multicol}
 \usepackage{float}
 \usepackage[spanish]{babel}
+\usepackage[spanish,vlined,ruled,]{algorithm2e}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Esteganografía en Imágenes}
+\title{Histogramas de Orientaciones}
 \author{\IEEEauthorblockN{Joaquín Pérez Araya}
 \IEEEauthorblockA{\textit{Departamento de Ciencias de la Computación} \\
 \textit{Universidad de Chile}\\
@@ -30,13 +30,141 @@ joaquin.perez.a@ug.uchile.cl}}
  
 
 \section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
+    Para es estudio de imágenes una de los descriptores de imagen útiles es el histograma de orientaciones, es decir, un histograma de las orientaciones internas de la imagen, los ángulos internos de ésta. En este documento se mencionarán 3 formas distintas de histogramas de orientación, uno símple...
     
+    Una de las utilidades de los histogramas de orientación es la recuperación de imágenes por dibujos, que consiste en comparar...
     
 \section*{Diseño e Implementación}
-    \subsection*{Histogramas}
-    \subsection*{Consultas}
+	La implementación realizada se divide en dos partes, los histogramas y las consultas.
+\subsection*{Histogramas}
+	Para el diseño e implementación de los tres histogramas se creó la función auxiliar $ConvolveSobel$ que calcula el gradiente en ambas direcciones utilizando la máscara Sobel. La implementación utiliza el siguiente algoritmo: 
+
+\begin{algorithm}
+	\caption{ConvolveSobel}	
+	\KwData{$image$ un arreglo que representa la imagen.}
+	\KwResult{Gradientes en X e Y de $imagen$.}
+	\DontPrintSemicolon
+	\Begin{
+	$Sobel_x \longleftarrow 
+	\{ \{-1,0,1\}, \{-2,0,2\}, \{-1,0,1\} \}			
+			$\;
+	$Sobel_y \longleftarrow transpose(Sobel\_x)$\;
+
+	$G_x \longleftarrow convolve(image,Sobel_x) $\;
+	$G_y \longleftarrow convolve(image,Sobel_y) $\;
+	\KwRet{$G_x, \; G_y$}
+	}
+	Notar que las funciones $transpose()$ y $convolve()$, son de los paquetes \texttt{numpy} y \texttt{skimage} respectivamente.
+\end{algorithm}
+	
+	Histograma de Orientaciones Simple:
+	Este se basa en la obtención directa de los ángulos de los vectores gradiente utilizando el arcotangente de la división de ambos, para luego dividir dichos ángulos en los diferentes bins y votar por ellos según la magnitud de los vectores del ángulo.
+	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones Simple}	
+		\KwData{$image$ un arreglo que representa la imagen, la cantidad de bins $k$.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$h \longleftarrow zeros(k)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		
+		\end{algorithm} 
+	
+	Histograma de Orientaciones de Bordes Locales (HELO): Calcula los ángulos 
+    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen, la cantidad de bins $k$, tamaño de los bloques $B$.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$h \longleftarrow zeros(k)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		
+		\end{algorithm} 	
+	
+	Histograma de Orientaciones de Bordes Locales Suave (SHELO): 	
+    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen, la cantidad de bins $k$, tamaño de los bloques $B$.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$h \longleftarrow zeros(k)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		
+		\end{algorithm} 	
 	
 	
+\subsection*{Consultas}
+	Para las consultas se aplica el siguiente algoritmo:
+	    	\begin{algorithm}[ht]
+		\caption{Histograma de Orientaciones de Bordes Locales}	
+		\KwData{$image$ un arreglo que representa la imagen de consulta, la cantidad de bins $k$ para los histogramas, tamaño de los bloques $B$ para los histogramas.}
+		\KwResult{Histograma de orientaciones de $image$.}
+		\DontPrintSemicolon
+		\Begin{
+		$database \longleftarrow ReadDatabase()$ \;
+		$size
+		$histograms \longleftarrow zeros((length(database), k)$ \;
+		$distances \longleftarrow zeros(length(database)$ \;
+		$G_x, G_y \longleftarrow ConvolveSobel(imagen)$\;
+
+		$angles \longleftarrow arctan(\frac{G_x}{G_y})$\;
+		\For{$angle$ in $angles$}{
+			\If{$angle < 0$}{
+				$angle \longleftarrow angle + \pi$\;			
+			}		
+		}
+		$mag \longleftarrow \sqrt{G_x^2+G_y^2}$ \;
+		$index \longleftarrow \lfloor \frac{angles}{\pi} (k-1)\rfloor mod \; k $ \;
+		\For{$i= 0$ to $k$}{
+			$r, c \longleftarrow indexes$ where $index = i$ \;			$h[i] \longleftarrow \sum mag[r,c]$
+		}
+		$h \longleftarrow normalize(h,2)$ \;
+		\KwRet{$h$}}
+		\end{algorithm} 	
 \section*{Experimentación}
     
 
