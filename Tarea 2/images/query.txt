@@ -1,0 +1,12 @@
+sketch_000001.jpg	accordion
+sketch_000002.jpg	airplane
+sketch_000003.jpg	airplane
+sketch_000004.jpg	airplane
+sketch_000005.jpg	anchor
+sketch_000006.jpg	anchor
+sketch_000007.jpg	ant
+sketch_000014.jpg	ant
+sketch_000015.jpg	ant
+sketch_000016.jpg	airplane
+sketch_000018.jpg	anchor
+sketch_000019.jpg	anchor
