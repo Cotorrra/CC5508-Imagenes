@@ -14,7 +14,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Histogramas de Orientaciones}
+\title{Imagenes Panorámicas}
 \author{\IEEEauthorblockN{Joaquín Pérez Araya}
 \IEEEauthorblockA{\textit{Departamento de Ciencias de la Computación} \\
 \textit{Universidad de Chile}\\
@@ -30,6 +30,10 @@ joaquin.perez.a@ug.uchile.cl}}
  
 
 \section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
+    Dentro del ámbito de análisis de imágenes, existen medidas que permiten caracterizar una imagen en particular, por ejemplo un histograma de colores de una imágen. Ëstas medidas se pueden clasificar en dos tipos, globales, que utilizan la información completa de la imagen (como el ejemplo anterior) y, por otra parte, los descriptores locales que describen áreas importantes dentro de ésta, así como elementos principales de ésta, etc.
+    En este documento se utilizará un descriptor local 
+    
+
     Para es estudio de imágenes uno de los descriptores de imagen útiles es el histograma de orientaciones, es decir, un histograma de los ángulos internos de ésta. En este documento se mencionará la implementación y funcionamiento de 3 formas de cálculo de histogramas de orientación, uno que calula los ángulos por pixel, otro que divide la imagen en bloques de un tamaño fijo para despues calcular los ángulos en cada bloque (HELO) y finalmente el último que divide la imagen en bloque y calcula los ángulos utilizando interpolación lineal según la posición de cada pixel del bloque (SHELO).
     
     Una de las posibles usos de este tipo de histogramas es en el ámbito de la recuperación de imágenes por dibujos, que dado un dibujo simple (como los que se puede hacer con una hoja y lápiz), obtener imagenes que representen el dibujo dado.

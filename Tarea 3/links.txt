@@ -1,0 +1,4 @@
+https://towardsdatascience.com/image-stitching-using-opencv-817779c86a83
+https://www.learnopencv.com/image-alignment-feature-based-using-opencv-c-python/
+http://inside.mines.edu/~whoff/courses/EENG512/projects/2012/Automated%20Image%20Stitching%20Using%20SIFT%20Feature%20Matching.pdf
+https://duckduckgo.com/?q=stiching+using+sift+images&t=ffab&atb=v167-1&ia=web
