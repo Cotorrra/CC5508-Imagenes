@@ -2,3 +2,8 @@ https://towardsdatascience.com/image-stitching-using-opencv-817779c86a83
 https://www.learnopencv.com/image-alignment-feature-based-using-opencv-c-python/
 http://inside.mines.edu/~whoff/courses/EENG512/projects/2012/Automated%20Image%20Stitching%20Using%20SIFT%20Feature%20Matching.pdf
 https://duckduckgo.com/?q=stiching+using+sift+images&t=ffab&atb=v167-1&ia=web
+
+1. Se elige una muestra mínima (4 pares de puntos) al azar
+2. Con los puntos p_1, p_2, p_3, p_4 y q_1, q_2, q_3, q_4 seleccionados al azar se debe encontrar la transformación de homografía (resolviendo el sistema de ecuaciones correspondiente).
+3. Una vez encontrada la transformación, transformas todos los puntos p a sus respectivos puntos q usando la transformación encontrada (p' = T*p)
+4. Para cada punto p'_i calculas la distancia con q_i, si esta distancia es menor a cierto umbral estos puntos son inliers. Acá cuentas la cantidad de inliers. Si la cantidad de inliers es mayor a un porcentaje de tu cantidad total de puntos (por ejemplo al 30% de los puntos) entonces la transformación encontrada es válida.
