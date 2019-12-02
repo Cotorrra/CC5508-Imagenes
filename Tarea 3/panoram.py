@@ -34,9 +34,6 @@ def panoramic(img1, img2):
 
     # Aplicar la transformación correspondiente
     dst = wrap_images(img1, img2, h)
-
-    # Escribir imagen en disco
-    dst[0:img2.shape[0], 0:img2.shape[1]] = img2
     cv2.imwrite("panoramica.png", dst)
 
 
@@ -50,7 +47,7 @@ def find_homography_ransac(src, dst):
     best_homo = None
 
     for i in range(TRIES):
-        picks = [rng.randint(0, len(src) - 1) for i in range(POINTS)]
+        picks = [rng.randint(0, len(src) - 1) for k in range(POINTS)]
         # get points and solve the system
         src_picks = []
         dst_picks = []
@@ -63,8 +60,7 @@ def find_homography_ransac(src, dst):
         # Resolver el sistema y probar qué tan buena es la "solucion"
         current_inliers = 0
         for j in range(src):
-            point = np.append(src[j], 1)  # (x, y, 1)
-            h_point = np.matmul(h, point)[0:2]  # multiplicación de matrices, (x, y)
+            h_point = apply_homography(src[j], h)  # multiplicación de matrices, (x, y)
             if distance(h_point, dst[j]) < DISTANCE_THRESHOLD:
                 current_inliers += 1
 
@@ -77,6 +73,11 @@ def find_homography_ransac(src, dst):
         return best_homo
     else:
         raise(TimeoutError("RANSAC couldnt find a fitting homography"))
+
+
+def apply_homography(point, homography):
+    ext_point = np.append(point, 1) # (x, y, 1)
+    return np.matmul(homography, ext_point)[0:2]
 
 
 def solve_homography(src_points, dst_points):
@@ -96,22 +97,38 @@ def solve_homography(src_points, dst_points):
     return np.reshape(h, (3, 3))
 
 
-def distance(p1, p2):
-    return np.sqrt(np.square(p1[0]-p2[0]) + np.square(p1[1]-p2[1]))
+
 
 
 def wrap_images(img1, img2, h):
     # TODO
     # Aplicar h pixel por pixel en img2 e interpolar el color entre img1 y img2.
-    dst = np.zeros((img1.shape[1] + img2.shape[1], img2.shape[0]))
-    dst[0:img1.shape[0], 0:img1.shape[1]] = img1
-    img3 = img1  # Extender los tamaños
+    wrap_img = np.zeros((img1.shape[0]+img2.shape[0], img1.shape[1]+img2.shape[1]))
+
+    center = half_point(img1.shape)
+
+    wrap_img[0:img1.shape[0], 0:img1.shape[1]] = img1
+
+
+
     for i in img2.shape[0]:
         for j in img2.shape[1]:
-            a = 1
+            point = img2[i, j]
+            h_point = apply_homography(point, h)
+            if h_point < img1.shape:
+                print("a")
 
     return cv2.warpPerspective(img1, h, (img1.shape[1] + img2.shape[1], img2.shape[0]))
 
 
+def distance(p1, p2):
+    return np.sqrt(np.square(p1[0]-p2[0]) + np.square(p1[1]-p2[1]))
+
+
+def half_point(p):
+    return int(p[0] * 0.5), int(p[1] * 0.5)
+
 if __name__ == "__main__":
     print("Hello")
+    point = (100, 200)
+    print(half_point(point))
