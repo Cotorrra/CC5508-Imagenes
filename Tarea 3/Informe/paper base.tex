@@ -1,4 +1,3 @@
-
 \documentclass[conference]{IEEEtran}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -25,12 +24,61 @@ joaquin.perez.a@ug.uchile.cl}}
 \maketitle
 
 \begin{abstract}
-	El documentó hace referencia a la técnica de Stiching, unir dos imágenes por medio de sus similitudes, se usarán descriptores locales SIFT para encontrar correspondencias, RANSAC para encontrar una homografía y transformar una imagen para calzarla con la otra.
+	El documentó hace referencia al diseño e implementación de la técnica de Stiching, unir dos imágenes por medio de sus similitudes, se usan descriptores locales SIFT para encontrar correspondencias, RANSAC para encontrar una homografía válida y transformar una imagen para calzarla con la otra.
 \end{abstract}
  
 
 \section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
-	La técnica de Stitching consiste en dadas dos imágenes de una misma escena con puntos común, crear una tercera que usa los puntos en común para 
+	Las imágenes panorámicas actualmente son una variante de fotografías de la mayoría de las cámaras digitales, permiten crear una gran imagen por medio de la toma sucesiva de dos o más fotos que están en la misma escena.
+	En análisis de imágenes ésta técnica se llama Stiching, consiste en unir imágenes de una imagen base a otra, a simple vista este proceso podría considerarse trivial, sin embargo se requiere el uso de descriptores locales para encontrar las semejanzas entre las imágenes, algún método estadístico para encontrar un modelo que permita encontrar una transformación adecuada para aplicar a la imagen a unir y finalmente tambien se necesita unir las dos imágenes.
+	Para la primera parte de encontrar las semejanzas entre las imágenes, en esta implementación se utilizarán descriptores SIFT cuyo resultado dará pares de puntos que concuerdan entre las dos imágenes.
+	Para encontrar la transformación se utilizará el método RANSAC (Consenso de muestras aleatorio, o RANdom SAmple Consensus en inglés), para encontrar una homografía adecuada para llevar a cabo la transformación.
+	Para aplicar la transformación se usará interpolación bilineal entre la imagen base y la imagen a transformar.
+	
+	Como último se utilizará el programa implementado para realizar pruebas utilizando diferentes imágenes y ver el rendimiento del programa creado.
+	
+
+
+\section*{Diseño e Implementación}
+	Para el diseño de la implementación se consideran 3 partes distintas:
+	\subsection*{Encontrar concordancias}
+		Se utiliza la librería OpenCV para utilizar descriptores locales SIFT en las dos imágenes para encontrar concordancias y pares de coordenadas de la imagen base y la imagen de destino. Una vez obtenidas, se verifica que existan al menos 4 pares de puntos para poder calcular la homografía. La implementación que está en el código está fuertemente basada en los ejemplos encontrados en el repositorio del curso.
+	\subsection*{Cálculo de Homografía}
+		Para el cálculo de la homografía se aplica el método RANSAC que se explica a continuación:
+		El método RANSAC funciona de la siguiente forma:
+		\begin{itemize}
+			\item Elige una pequeña muestra representativa, en este caso 4 pares de puntos: 4 de destino $d$, 4 de fuente $s$.
+			\item Con esta muestra, se arma un modelo, en este caso usando los 8 pares de puntos construye una matriz de $9 \times 9$ la cual procede a resolver la ecuación $s \cdot H = d$, la metodología para la construcción de ésta matriz está en el Anexo.
+			\item Con la homografía obtenida al resolver el sistema, ésta se aplica a todos los puntos fuente encontrados utilizando SIFT, y se mide su distancia con los puntos de destino, si la distancia entre éstos puntos está bajo un umbral (\texttt{DISTANCE_THRESHOLD} en la implementación), éste se cuenta para validar la homografía como correcta, si al final de el cálculo de distancias la cantidad de puntos está bajo el umbral es menor que un determinado porcentaje de la muestra total (\texttt{INLIER_THRESHOLD} en la implementación) la homografía se descarta y se repite el proceso.
+			\item Este proceso se repite una determinada cantidad de veces (\texttt{RANSAC_TRIES} en el código) para refinar la homografía encontrada.
+		\end{itemize}
+		Para la experimentación se utilizaron los siguientes parámetros para RANSAC:
+		 \begin{itemize}
+		 	\item Umbral de distancia (\texttt{DISTANCE_THRESHOLD}) $3$.
+		 	\item Porcentaje de inliers para aprobar (\texttt{INLIER_THRESHOLD}) $30%$.
+		 	\item Intentos totales (\texttt{RANSAC_TRIES}) 10.
+		 \end{itemize}
+	\subsection*{Unión de Imágenes}
+	
+
+
+\section*{Experimentación}
+	Para la experimentación se utilizaron imágenes los casos de pruebas pedidos más un caso extra.
+	
+	
+\section*{Conclusión}
+	TKM
+
+\begin{thebibliography}{99}
+	 \bibitem{HELO}
+	 \bibitem{HELO}
+
+\end{thebibliography}
+
+\section*{Anexo}
+	\subsection{Matriz para resolución de sistemas de ecuaciones.}
+
+\end{document}
 
 \begin{figure}[H]
 \begin{multicols}{4}
@@ -42,24 +90,3 @@ joaquin.perez.a@ug.uchile.cl}}
 \end{multicols}
 \caption{Ejemplo de una posible búsqueda, la imagen de la izquierda representa el dibujo de búsqueda y las de la derecha los resultados esperados.}
 \end{figure}
-
-\section*{Diseño e Implementación}
-	\subsection{Encontrar concordancias SIFT}
-
-	\subsection{Cálculo de Homografía}
-				
-	\subsection{Unión de Imágenes}
-	
-
-
-\section*{Experimentación}
-
-\section*{Conclusión}
-
-
-\begin{thebibliography}{99}
-
-
-\end{thebibliography}
-
-\end{document}
