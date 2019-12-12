@@ -5,23 +5,23 @@ import cv2
 import numpy as np
 import random as rng
 
-RANSAC_TRIES = 25  # intentos
-INLIER_POR_THRESHOLD = 0.00  # Porcentaje de puntos Inliers para considerar la homografía válida
-DISTANCE_THRESHOLD = 3  # Distancia máxima para que un punto sea inlier
+RANSAC_TRIES = 30  # intentos
+INLIER_POR_THRESHOLD = 0.30  # Porcentaje de puntos Inliers para considerar la homografía válida
+DISTANCE_THRESHOLD = 4 # Distancia máxima para que un punto sea inlier
 POINTS = 4  # Se eligen 4 puntos para armar una matriz de 9x9 con 9 incognitas.
+DEBUG = False
 
 
 def panoramic(img1, img2):
     sift = cv2.xfeatures2d.SIFT_create(nOctaveLayers=6, sigma=1.6)
-
     # Calculos en la imagen 1
-    # img1 = img1.astype('uint8')
+    img1 = img1.astype('uint8')
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     kp1 = sift.detect(gray1)
     kp1, des1 = sift.compute(gray1, kp1)
 
     # Calculos en la imagen 2
-    # img2 = img2.astype('uint8')
+    img2 = img2.astype('uint8')
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     kp2 = sift.detect(gray2)
     kp2, des2 = sift.compute(gray2, kp2)
@@ -52,37 +52,32 @@ def find_homography_ransac(src, dst):
     best_homo = None
 
     for i in range(RANSAC_TRIES):
-        picks = [rng.randint(0, len(src) - 1) for k in range(POINTS)]
-        # get points and solve the system
+        picks = rng.sample(range(len(src)), POINTS)
         src_picks = []
         dst_picks = []
-
         for j in range(POINTS):
             src_picks += [src[picks[j]]]  # (x, y)
             dst_picks += [dst[picks[j]]]  # (x, y)
 
+        # Resolver el sistema
         h = solve_homography(src_picks, dst_picks)
-        # Resolver el sistema y probar qué tan buena es la "solucion"
+
         current_inliers = 0
         for j in range(len(src)):
             h_point = apply_homography(src[j], h)  # multiplicación de matrices, (x, y)
             if distance(h_point, dst[j]) <= DISTANCE_THRESHOLD:
-                current_inliers += 1
+                current_inliers = current_inliers + 1
 
         if current_inliers >= len(src) * INLIER_POR_THRESHOLD:
             if current_inliers >= best_inliers:
+                print(current_inliers / len(src))
                 best_inliers = current_inliers
                 best_homo = h
 
     if best_homo is not None:
         return best_homo
     else:
-        raise (TimeoutError("RANSAC couldnt find a fitting homography"))
-
-
-def apply_homography(point, homography):
-    ext_point = np.append(point, 1)  # (x, y, 1)
-    return np.matmul(homography, ext_point)[0:2]
+        raise TimeoutError("RANSAC couldnt find a fitting homography")
 
 
 def solve_homography(src_points, dst_points):
@@ -95,59 +90,69 @@ def solve_homography(src_points, dst_points):
         dy = dst_points[i][1]
         a[2 * i] = np.array([-sx, -sy, -1, 0, 0, 0, dx * sx, dx * sy, dx])
         a[(2 * i) + 1] = np.array([0, 0, 0, -sx, -sy, -1, dy * sx, dy * sy, dy])
-    a[-1] = np.array([0, 0, 0, 0, 0, 0, 0, 0, 1])
+    a[8] = np.array([0, 0, 0, 0, 0, 0, 0, 0, 1])
     b = np.array([0, 0, 0, 0, 0, 0, 0, 0, 1])
-    h = np.linalg.solve(a, b)
+    try:
+        h = np.linalg.solve(a, b)
+    except Exception as e:
+        # Con SIFT algunas coordenadas quedan repetidas
+        # Por lo que hay que atrapar los errores de solve
+        h = b
+
     return np.reshape(h, (3, 3))
 
 
-def wrap_images(img1, img2, h):
+def wrap_images(src, dst, h):
     # TODO
     # Aplicar h pixel por pixel en img2 e interpolar el color entre img1 y img2.
-    wrap_img = np.zeros((img1.shape[0] + img2.shape[0], img1.shape[1] + img2.shape[1], 3))
-
-    center = half_point(wrap_img.shape)
-    img1_x = img1.shape[0]
-    img1_y = img1.shape[1]
-
-    left = int(center[0] - (img1_x / 2))
-    right = int(center[0] + (img1_x / 2))
-    up = int(center[1] - (img1_y / 2))
-    down = int(center[1] + (img1_y / 2))
-
-    wrap_img[left:right, up:down] = img1
-
-    for i in img2.shape[0]:
-        for j in img2.shape[1]:
-            color = img2[i, j]
-            h_point = apply_homography((i, j), h)
-            if not is_in_between((i, j), (left, right), (up, down)):
-                wrap_img[h_point[0], h_point[1]] = color
+    wrap_img = np.zeros((dst.shape[0], src.shape[0] + dst.shape[1], 3))
+    wrap_img[0:dst.shape[0], 0:dst.shape[1]] = dst
+    inverse = np.linalg.inv(h)
+    # inverse /= inverse[2, 2]
+    for i in range(0, wrap_img.shape[0]):
+        for j in range(0, wrap_img.shape[1]):
+            if is_null_color(wrap_img[i, j]):
+                point = apply_homography((j, i), inverse)
+                try:
+                    wrap_img[i, j] = interpolate_color(point, src)
+                except IndexError as e:
+                    pass
 
     return wrap_img
 
 
-def interpolate_color(color1, color2, ratio):
-    new_color1 = map((lambda x: int(x * ratio)), color1)
-    new_color2 = map((lambda x: int(x * (1 - ratio))), color2)
-    return 1
+def is_null_color(color):
+    return (color[0] == 0) and (color[1] == 0) and (color[2] == 0)
 
 
-def is_in_between(point, x, y):
-    in_x = x[0] <= point[0] <= x[1]
-    in_y = y[0] <= point[1] <= y[1]
-    return in_x and in_y
+def interpolate_color(point, image):
+    base_x = np.floor(point[0])
+    ratio_x = point[0] - base_x
+    base_y = np.floor(point[1])
+    ratio_y = point[1] - base_y
+    return_color = interpolate_component((1-ratio_x)*(1-ratio_y), image[point[1], point[0]])
+    return_color += interpolate_component(ratio_x*(1-ratio_y), image[point[1] + 1, point[0]])
+    return_color += interpolate_component(ratio_y * (1 - ratio_x), image[point[1], point[0] + 1])
+    return_color += interpolate_component(ratio_x * ratio_y, image[point[1] + 1, point[0] + 1])
+    return return_color
+
+
+def interpolate_component(ratio, component):
+    return np.array([ratio * component[0], ratio * component[1], ratio * component[2]]).astype(int)
 
 
 def distance(p1, p2):
     return np.sqrt(np.square(p1[0] - p2[0]) + np.square(p1[1] - p2[1]))
 
 
-def half_point(p):
-    return int(p[0] % 2), int(p[1] * 0.5)
+def apply_homography(point, homography):
+    ext_point = np.append(point, 1)  # (x, y, 1)
+    point = np.matmul(homography, ext_point)
+    point /= point[2]
+    return point[0:2].astype(int)
 
 
 if __name__ == "__main__":
-    img1 = cv2.imread('Images/caso_1/1a.jpg')
-    img2 = cv2.imread('Images/caso_1/1b.jpg')
-    panoramic(img1, img2)
+    img_1 = cv2.imread('Images/caso_4/img08.jpg')
+    img_2 = cv2.imread('Images/caso_4/img01.jpg')
+    panoramic(img_1, img_2)
