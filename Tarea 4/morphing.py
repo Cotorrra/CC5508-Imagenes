@@ -1,23 +1,28 @@
 
-
 import cv2
-import numpy as np
+from util import *
+
+# Constantes para el calculo de peso
+A = 1
+B = 1
+P = 0.5
 
 
-def create_morphing_video(src, dst, point_filename, images):
+def create_morphing_video(src, dst, point_filename, n_images):
     # leer puntos en el fichero de puntos
     file = open(point_filename, "r")
     file_lines = file.readlines()
-    lines = np.zeros((len(file_lines), 2, 4))
+    lines_src = np.zeros((len(file_lines), 4))
+    lines_dst = np.zeros((len(file_lines), 4))
     for i in range(len(file_lines)):
         line = file_lines[i]
         line = line.split(" ")
         line = [int(x) for x in line[1:]]
-        lines[i, 0] = line[0:4]
-        lines[i, 1] = line[4:8]
+        lines_src[i] = line[0:4]
+        lines_dst[i] = line[4:8]
 
     file.close()
-    image_collection = morph(src, dst, lines, images)
+    image_collection = morph(src, dst, lines_src, lines_dst, n_images)
 
     shape = src.shape[0:2]
     out = cv2.VideoWriter("morphing.avi",
@@ -25,120 +30,56 @@ def create_morphing_video(src, dst, point_filename, images):
 
     for image in image_collection:
         out.write(image)
+
     out.release()
 
 
-def perpendicular(vector):
+def wrap(img_src, lines_src, lines_dst):
     """
-    Calcula la linea perpendicular a otra con el mismo largo
-    (Esta es la función perpendicular que está en el paper)
-    :param vector: Vector al cual se le calcula la perpendicular
-    :return: Vector perpendicular
+    Implementa el wrap de una imagen con inverse mapping.
+    :param img_src: imagen fuente
+    :param lines_src: lineas de correspondencia con la fuente
+    :param lines_dst: lineas de correspondencia con el destino
+    :return: wrapped_image
     """
-    return np.array([vector[1], -vector[0]])
+    result = np.zeros(img_src.shape)
+    for i in range(result.shape[0]):
+        for j in range(result.shape[1]):
+            dsum = np.array([0, 0], dtype=float)
+            weightsum = 0
+            for k in range(lines_src.shape[0]):
+                x = np.array([j, i])  # Dado que las imagenes se dan vuelta
+                p = np.array(lines_src[k, 0:2])
+                q = np.array(lines_src[k, 2:4])
+                p_ = np.array(lines_dst[k, 0:2])
+                q_ = np.array(lines_dst[k, 2:4])
+                u, v = calculate_uv(x, p, q)
+                x_ = calculate_x(u, v, p_, q_)
+                d = x_ - x
+                weight = calculate_weight(x, u, v, p, q, A, B, P)
+                dsum += d * weight
+                weightsum += weight
+            x_prime = np.floor((x + (dsum / weightsum))).astype(int)
+            result[i, j] = img_src[min(x_prime[1], result.shape[0] - 1), min(x_prime[0], result.shape[1] - 1)]
+    return result
 
 
-def norm(point):
-    """
-    Calcula la norma del punto
-    :param point:
-    :return:
-    """
-    return np.linalg.norm(point)
-
-
-def calculate_uv(x, p, q):
-    """
-    Calcula u y v según los parametros vistos en el paper.
-    :param x: punto de la imagen fuente
-    :param q: punto 1 de la línea de la imagen fuente
-    :param p: punto 2 de la línea de la imagen fuente
-    :return: u, v Escalares
-    """
-    u = (x - p).dot(q - p) / (norm(q - p) ** 2)
-    v = (x - p).dot(perpendicular(q - p)) / (norm(q - p))
-    return u, v
-
-
-def calculate_x(u, v, p_, q_):
-    """
-    Calcula X' según las formulas del paper de morphing
-    :param u:  escalar u
-    :param v:  escalar v
-    :param p_: punto 1 de la linea de la imagen destino
-    :param q_: punto 2 de la linea de la imagen destino
-    :return: Vector
-    """
-    first = p_
-    second = u * (q_ - p_)
-    third = v * perpendicular(q_-p_)
-    third /= norm(q_-p_)
-    return first + second + third
-
-
-def dist_point_line(point, p, q):
-    """
-    Calcula la distancia entre el punto dado y la recta que forma la línea
-    :param point: Punto a cual se le quiere medir la distancia
-    :param p: Punto 1 de la recta
-    :param q: Punto 2 de la recta
-    :return: Valor escalar.
-    """
-
-    # Primero calcula la ecuación de la recta
-    a = -(p[1] - q[1]) / (p[0] - q[0]) # m
-    b = 1
-    c = p[0] * a + p[1] # n
-    return (a*point[0] + b*point[1] + c) / np.linalg.norm((a, b, c))
-
-
-def calculate_weight(point, p, q):
-    A = 0
-    B = 0
-    P = 0
-    dist = dist_point_line(point, p, q)
-    length = norm(p-q)
-    return np.power(np.divide(np.power(length, P), A + dist), B)
-
-def morph(src, dst, lines, images):
+def morph(src, dst, lines_src, lines_dst, n_images):
     collection = np.array([])
 
-    for i in range(images + 1):
-
-        morph_image = np.zeros(src.shape)
-        ratio = i / images  # 0, 1/im, 2/im, ... ,1
-
-        for i in range(src.shape[0]):
-            for j in range(src.shape[1]):
-                dsum = np.array([0, 0])
-                weightsum = 0
-                for l in lines:
-                    x = np.array([j, i]) # Dado que las imagenes se dan vuelta
-                    p = np.array(l[0, 0:2])
-                    q = np.array(l[0, 2:4])
-                    p_ = np.array(l[1, 0:2])
-                    q_ = np.array(l[1, 2:4])
-                    u, v = calculate_uv(x, p, q)
-                    x_ = calculate_x(u, v, p_, q_)
-                    D = x - x_
-                    weight = calculate_weight(x, p, q)
-                    dsum += D * weight
-                    weightsum += weight
-                x_prime = x + (dsum / weightsum)
-
-        # ¿Something about the points?
-        # do important stuff
-        # TODO implement this stuff
-        morph_image = src
-
-        collection.insert(morph_image)
+    for i in range(n_images + 1):
+        t = 1 - (i / n_images)  # 0, 1/im, 2/im, ... , 1
+        sd_lines = interpolate_lines(lines_src, lines_dst, t)
+        wrap_s = wrap(src, lines_src, sd_lines)
+        wrap_d = wrap(dst, lines_dst, sd_lines)
+        morph_image = t*wrap_s + (1-t)*wrap_d
+        collection = np.append(collection, morph_image)
 
     return collection
 
 
 if __name__ == "__main__":
-    a = ["1.", "2", "3", "4", "5", "6", "7", "8", "9"]
-    a = [int(x) for x in a[1:]]
-    b = np.zeros((2, 1, 4))
-    b[0, 0] = a[0:4]
-    b[1, 0] = a[4:8]
+    img1 = cv2.imread("Caras/couple0.jpg")
+    img2 = cv2.imread("Caras/couple1.jpg")
+    line_file = "Caras/lines.txt"
+    create_morphing_video(img1, img2, line_file, 30)
