@@ -5,7 +5,7 @@ def interpolate_lines(lines1, lines2, t):
     """
     Interpola dos lineas segun t
     :param lines1: set de lineas 1
-    :param lines1: set de lineas dos
+    :param lines2: set de lineas 2
     :param t: escalar entre 0 y 1
     :return:
     """

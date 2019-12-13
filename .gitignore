@@ -126,3 +126,5 @@ dmypy.json
 *.aux
 
 *.gz
+Tarea 4/*.png
+*.avi

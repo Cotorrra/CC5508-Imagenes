@@ -1,12 +1,13 @@
 
 import cv2
 from util import *
+import time
 
 # Constantes para el calculo de peso
 A = 1
 B = 1
-P = 0.5
-
+P = 0
+# (length^p / (A + dist))^ b
 
 def create_morphing_video(src, dst, point_filename, n_images):
     # leer puntos en el fichero de puntos
@@ -26,10 +27,12 @@ def create_morphing_video(src, dst, point_filename, n_images):
 
     shape = src.shape[0:2]
     out = cv2.VideoWriter("morphing.avi",
-                          cv2.VideoWriter_fourcc(*'DIVX'), 15, shape)
+                          cv2.VideoWriter_fourcc(*'DIVX'), 10, shape)
 
-    for image in image_collection:
-        out.write(image)
+    for i in range(n_images):
+        out.write(image_collection[i])
+        if i % 2 == 1:
+            cv2.imwrite("/img"+str(i)+".png")
 
     out.release()
 
@@ -59,7 +62,7 @@ def wrap(img_src, lines_src, lines_dst):
                 weight = calculate_weight(x, u, v, p, q, A, B, P)
                 dsum += d * weight
                 weightsum += weight
-            x_prime = np.floor((x + (dsum / weightsum))).astype(int)
+            x_prime = np.floor((x + (dsum / weightsum))).astype('uint8')
             result[i, j] = img_src[min(x_prime[1], result.shape[0] - 1), min(x_prime[0], result.shape[1] - 1)]
     return result
 
@@ -70,16 +73,22 @@ def morph(src, dst, lines_src, lines_dst, n_images):
     for i in range(n_images + 1):
         t = 1 - (i / n_images)  # 0, 1/im, 2/im, ... , 1
         sd_lines = interpolate_lines(lines_src, lines_dst, t)
+        ds_lines = interpolate_lines(lines_dst, lines_src, t)
         wrap_s = wrap(src, lines_src, sd_lines)
-        wrap_d = wrap(dst, lines_dst, sd_lines)
+        wrap_d = wrap(dst, lines_dst, ds_lines)
         morph_image = t*wrap_s + (1-t)*wrap_d
-        collection = np.append(collection, morph_image)
+        morph_image = morph_image.astype('uint8')
+        collection = np.append(collection, [morph_image])
+        print("Image number "+str(i)+" is done.")
+        cv2.imwrite("img"+str(i)+".png", morph_image)
 
     return collection
 
 
 if __name__ == "__main__":
-    img1 = cv2.imread("Caras/couple0.jpg")
-    img2 = cv2.imread("Caras/couple1.jpg")
-    line_file = "Caras/lines.txt"
-    create_morphing_video(img1, img2, line_file, 30)
+    img1 = cv2.imread("Figuras/cl.jpg")
+    img2 = cv2.imread("Figuras/sq.jpg")
+    line_file = "Figuras/lines.txt"
+    start_time = time.process_time()
+    create_morphing_video(img1, img2, line_file, 1)
+    print("--- %.2f seconds ---" % (time.process_time() - start_time))
