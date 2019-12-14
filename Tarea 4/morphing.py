@@ -24,18 +24,7 @@ def create_morphing_video(src, dst, point_filename, n_images):
         lines_dst[i] = line[4:8]
 
     file.close()
-    image_collection = morph(src, dst, lines_src, lines_dst, n_images)
-    print(image_collection)
-    shape = src.shape[0:2]
-    out = cv2.VideoWriter("morphing.avi",
-                          cv2.VideoWriter_fourcc(*'DIVX'), 10, shape)
-
-    for i in range(n_images):
-        out.write(image_collection[i])
-        if i % 2 == 1:
-            cv2.imwrite("/img"+str(i)+".png")
-
-    out.release()
+    morph(src, dst, lines_src, lines_dst, n_images)
 
 
 def wrap(img_src, lines_src, lines_dst):
@@ -70,8 +59,10 @@ def wrap(img_src, lines_src, lines_dst):
 
 
 def morph(src, dst, lines_src, lines_dst, n_images):
-    size_collection = np.append(np.array([n_images]), src.shape)
-    collection = np.zeros(size_collection)
+
+    shape = src.shape[0:2]
+    out = cv2.VideoWriter("morphing.avi",
+                          cv2.VideoWriter_fourcc(*'DIVX'), 10, shape)
 
     for i in range(n_images):
         t = 1 - (i / (n_images - 1))  # 0, 1/im, 2/im, ... , 1
@@ -80,12 +71,13 @@ def morph(src, dst, lines_src, lines_dst, n_images):
         wrap_s = wrap(src, lines_src, sd_lines)
         wrap_d = wrap(dst, lines_dst, ds_lines)
         morph_image = t*wrap_s + (1-t)*wrap_d
-        collection[i] = morph_image
-        print("Image number "+str(i)+" is done.")
         cv2.imwrite("img"+str(i)+".png", morph_image)
+        out.write(morph_image)
+        if i % 2 == 1:
+            print("Image number " + str(i) + " is done.")
+            cv2.imwrite("/img" + str(i) + ".png")
 
-    print(collection)
-    return collection
+    out.release()
 
 
 if __name__ == "__main__":
