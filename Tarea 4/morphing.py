@@ -55,6 +55,8 @@ def wrap(img_src, lines_src, lines_dst):
             x_prime = (x + (dsum / weightsum)).astype(int)
             if 0 <= x_prime[1] < img_src.shape[0] and 0 <= x_prime[0] < img_src.shape[1]:
                 result[i, j] = img_src[x_prime[1], x_prime[0]]
+            else:
+                result[i, j] = img_src[i, j]
     return result
 
 
