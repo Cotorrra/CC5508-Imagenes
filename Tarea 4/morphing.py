@@ -6,8 +6,9 @@ import time
 # Constantes para el calculo de peso
 A = 1
 B = 1
-P = 0
+P = 0.5
 # (length^p / (A + dist))^ b
+
 
 def create_morphing_video(src, dst, point_filename, n_images):
     # leer puntos en el fichero de puntos
@@ -24,7 +25,7 @@ def create_morphing_video(src, dst, point_filename, n_images):
 
     file.close()
     image_collection = morph(src, dst, lines_src, lines_dst, n_images)
-
+    print(image_collection)
     shape = src.shape[0:2]
     out = cv2.VideoWriter("morphing.avi",
                           cv2.VideoWriter_fourcc(*'DIVX'), 10, shape)
@@ -52,36 +53,38 @@ def wrap(img_src, lines_src, lines_dst):
             weightsum = 0
             for k in range(lines_src.shape[0]):
                 x = np.array([j, i])  # Dado que las imagenes se dan vuelta
-                p = np.array(lines_src[k, 0:2])
-                q = np.array(lines_src[k, 2:4])
-                p_ = np.array(lines_dst[k, 0:2])
-                q_ = np.array(lines_dst[k, 2:4])
+                p = np.array(lines_dst[k, 0:2])
+                q = np.array(lines_dst[k, 2:4])
+                p_ = np.array(lines_src[k, 0:2])
+                q_ = np.array(lines_src[k, 2:4])
                 u, v = calculate_uv(x, p, q)
                 x_ = calculate_x(u, v, p_, q_)
                 d = x_ - x
                 weight = calculate_weight(x, u, v, p, q, A, B, P)
                 dsum += d * weight
                 weightsum += weight
-            x_prime = np.floor((x + (dsum / weightsum))).astype('uint8')
-            result[i, j] = img_src[min(x_prime[1], result.shape[0] - 1), min(x_prime[0], result.shape[1] - 1)]
+            x_prime = (x + (dsum / weightsum)).astype(int)
+            if 0 <= x_prime[1] < img_src.shape[0] and 0 <= x_prime[0] < img_src.shape[1]:
+                result[i, j] = img_src[x_prime[1], x_prime[0]]
     return result
 
 
 def morph(src, dst, lines_src, lines_dst, n_images):
-    collection = np.array([])
+    size_collection = np.append(np.array([n_images]), src.shape)
+    collection = np.zeros(size_collection)
 
-    for i in range(n_images + 1):
-        t = 1 - (i / n_images)  # 0, 1/im, 2/im, ... , 1
+    for i in range(n_images):
+        t = 1 - (i / (n_images - 1))  # 0, 1/im, 2/im, ... , 1
         sd_lines = interpolate_lines(lines_src, lines_dst, t)
         ds_lines = interpolate_lines(lines_dst, lines_src, t)
         wrap_s = wrap(src, lines_src, sd_lines)
         wrap_d = wrap(dst, lines_dst, ds_lines)
         morph_image = t*wrap_s + (1-t)*wrap_d
-        morph_image = morph_image.astype('uint8')
-        collection = np.append(collection, [morph_image])
+        collection[i] = morph_image
         print("Image number "+str(i)+" is done.")
         cv2.imwrite("img"+str(i)+".png", morph_image)
 
+    print(collection)
     return collection
 
 
@@ -90,5 +93,5 @@ if __name__ == "__main__":
     img2 = cv2.imread("Figuras/sq.jpg")
     line_file = "Figuras/lines.txt"
     start_time = time.process_time()
-    create_morphing_video(img1, img2, line_file, 1)
+    create_morphing_video(img1, img2, line_file, 20)
     print("--- %.2f seconds ---" % (time.process_time() - start_time))

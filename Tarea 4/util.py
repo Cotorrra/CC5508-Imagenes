@@ -22,13 +22,23 @@ def perpendicular(vector):
     return np.array([vector[1], -vector[0]])
 
 
-def norm(point):
+def norm(p):
     """
     Calcula la norma del punto
-    :param point:
+    :param p:
     :return:
     """
-    return np.linalg.norm(point)
+    return np.sqrt(np.power(p[0], 2) + np.power(p[1], 2))
+
+
+def dot_product(p1, p2):
+    """
+    Calcula el producto punto entre dos puntos
+    :param p1:
+    :param p2:
+    :return:
+    """
+    return p1[0]*p2[0] + p1[1]*p2[1]
 
 
 def calculate_uv(x, p, q):
@@ -39,8 +49,8 @@ def calculate_uv(x, p, q):
     :param p: punto 2 de la línea de la imagen fuente
     :return: u, v Escalares
     """
-    u = (x - p).dot(q - p) / np.power(norm(q - p), 2)
-    v = (x - p).dot(perpendicular(q - p)) / (norm(q - p))
+    u = dot_product(x - p, q - p) / np.power(norm(q - p), 2)
+    v = dot_product(x - p, perpendicular(q - p)) / (norm(q - p))
     return u, v
 
 
@@ -55,8 +65,7 @@ def calculate_x(u, v, p_, q_):
     """
     first = p_
     second = u * (q_ - p_)
-    third = v * perpendicular(q_-p_)
-    third /= norm(q_-p_)
+    third = (v * perpendicular(q_-p_)) / norm(q_-p_)
     return first + second + third
 
 
