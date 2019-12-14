@@ -24,6 +24,8 @@ def create_morphing_video(src, dst, point_filename, n_images):
         lines_dst[i] = line[4:8]
 
     file.close()
+    src = src.astype('uint8')
+    dst = dst.astype('uint8')
     morph(src, dst, lines_src, lines_dst, n_images)
 
 
@@ -67,25 +69,24 @@ def morph(src, dst, lines_src, lines_dst, n_images):
                           cv2.VideoWriter_fourcc(*'DIVX'), 10, shape)
 
     for i in range(n_images):
-        t = 1 - (i / (n_images - 1))  # 0, 1/im, 2/im, ... , 1
+        t = 1 - np.divide(i, (n_images - 1))  # 0, 1/im, 2/im, ... , 1
         sd_lines = interpolate_lines(lines_src, lines_dst, t)
         ds_lines = interpolate_lines(lines_dst, lines_src, t)
         wrap_s = wrap(src, lines_src, sd_lines)
         wrap_d = wrap(dst, lines_dst, ds_lines)
         morph_image = t*wrap_s + (1-t)*wrap_d
-        cv2.imwrite("img"+str(i)+".png", morph_image)
+        morph_image = morph_image.astype('uint8')
+        cv2.imwrite("Tests/img"+str(i)+".png", morph_image)
         out.write(morph_image)
-        if i % 2 == 1:
-            print("Image number " + str(i) + " is done.")
-            cv2.imwrite("/img" + str(i) + ".png")
+        print("Image number " + str(i+1) + " is done, with t = "+str(np.round(t,2))+" ("+str(int(-100*(t-1)))+"%)")
 
     out.release()
 
 
 if __name__ == "__main__":
-    img1 = cv2.imread("Figuras/cl.jpg")
-    img2 = cv2.imread("Figuras/sq.jpg")
-    line_file = "Figuras/lines.txt"
+    img1 = cv2.imread("Caras/couple0.jpg")
+    img2 = cv2.imread("Caras/couple1.jpg")
+    line_file = "Caras/lines.txt"
     start_time = time.process_time()
-    create_morphing_video(img1, img2, line_file, 20)
+    create_morphing_video(img1, img2, line_file, 100)
     print("--- %.2f seconds ---" % (time.process_time() - start_time))
