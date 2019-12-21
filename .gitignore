@@ -127,5 +127,4 @@ dmypy.json
 
 *.gz
 Tarea 4/*.png
-*.avi
-Tarea 4/morphing.avi
+Tarea 4/*.avi

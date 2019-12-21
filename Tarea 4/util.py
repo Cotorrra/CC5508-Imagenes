@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 
 def interpolate_lines(lines1, lines2, t):
@@ -9,7 +10,20 @@ def interpolate_lines(lines1, lines2, t):
     :param t: escalar entre 0 y 1
     :return:
     """
-    return t*lines1 + (1-t)*lines2
+    return t * lines1 + (1 - t) * lines2
+
+
+def itos(number):
+    """
+    Calcula el string segun el numero, donde los numeros de 1 digito tienen 2 numeros
+    ie: 2 -> 02
+    :param number: numero a convertir
+    :return: 
+    """
+    if number < 10:
+        return "0" + str(number)
+    else:
+        return str(number)
 
 
 def perpendicular(vector):
@@ -38,7 +52,7 @@ def dot_product(p1, p2):
     :param p2:
     :return:
     """
-    return p1[0]*p2[0] + p1[1]*p2[1]
+    return p1[0] * p2[0] + p1[1] * p2[1]
 
 
 def calculate_uv(x, p, q):
@@ -65,7 +79,7 @@ def calculate_x(u, v, p_, q_):
     """
     first = p_
     second = u * (q_ - p_)
-    third = (v * perpendicular(q_-p_)) / norm(q_-p_)
+    third = (v * perpendicular(q_ - p_)) / norm(q_ - p_)
     return first + second + third
 
 
@@ -82,12 +96,12 @@ def dist_point_line(point, u, v, p, q):
     if 0 < u < 1:
         return np.abs(v)
     elif u < 0:
-        return norm(point-p)
+        return norm(point - p)
     else:
-        return norm(point-q)
+        return norm(point - q)
 
 
 def calculate_weight(point, u, v, p, q, A, B, P):
     dist = dist_point_line(point, u, v, p, q)
-    length = norm(p-q)
+    length = norm(p - q)
     return np.power(np.divide(np.power(length, P), A + dist), B)
