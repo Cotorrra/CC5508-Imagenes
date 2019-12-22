@@ -3,13 +3,16 @@ from util import *
 import time
 
 # Constantes para el calculo de peso
-A = 1
-B = 1
-P = 0.5
+
+
+
 # (length^p / (A + dist))^ b
 
 
 def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_IM=False):
+    src = src.astype('uint8')
+    dst = dst.astype('uint8')
+
     file = open(point_filename, "r")
     file_lines = file.readlines()
     lines_src = np.zeros((len(file_lines), 4))
@@ -17,19 +20,21 @@ def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_
 
     for i in range(len(file_lines)):
         if DEBUG:
-            print("Reading Lines... "+str(int(100 * (i + 1) / (len(file_lines) + 1)))+"%")
+            print("Reading Lines... " + str(int(100 * (i + 1) / (len(file_lines) + 1))) + "%")
         line = file_lines[i]
         line = line.split(" ")
         line = [int(x) for x in line[1:]]
         lines_src[i] = line[0:4]
         lines_dst[i] = line[4:8]
+    file.close()
+
+    # Crea una carpeta donde se guardan todas las imagenes creadas por el morphing.
+    if SAVE_IM and not os.path.exists("Images/"):
+        os.makedirs("Images/")
 
     if DEBUG:
         print("Starting Morphing...")
 
-    file.close()
-    src = src.astype('uint8')
-    dst = dst.astype('uint8')
     collection = morph(src, dst, lines_src, lines_dst, n_images, DEBUG, SAVE_IM)
 
     if DEBUG:
@@ -37,14 +42,13 @@ def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_
 
     shape = (src.shape[1], src.shape[0])
     out = cv2.VideoWriter("morphing.avi",
-                          cv2.VideoWriter_fourcc(*'XVID'), 1, shape)
+                          cv2.VideoWriter_fourcc(*'XVID'), 10, shape)
 
     if DEBUG:
         print("Creating video...")
 
     for image in collection:
         out.write(image)
-
     out.release()
 
 
@@ -70,7 +74,7 @@ def wrap(img_src, lines_src, lines_dst):
                 u, v = calculate_uv(x, p, q)
                 x_ = calculate_x(u, v, p_, q_)
                 d = x_ - x
-                weight = calculate_weight(x, u, v, p, q, A, B, P)
+                weight = calculate_weight(x, u, v, p, q)
                 dsum += d * weight
                 weightsum += weight
             x_prime = x + (dsum / weightsum)
@@ -116,9 +120,9 @@ def morph(src, dst, lines_src, lines_dst, n_images, DEBUG=False, SAVE_IM=False):
         morph_image = morph_image.astype('uint8')
         arr.append(morph_image)
         if SAVE_IM:
-            cv2.imwrite("Tests/img" + itos(i + 1) + ".png", morph_image)
+            cv2.imwrite("Images/img" + itos(i + 1) + ".png", morph_image)
         if DEBUG:
-            print("Processing Images... "+str(int(100 * (i + 1) / n_images)) + "%")
+            print("Processing Images... " + str(int(100 * (i + 1) / n_images)) + "%")
 
     return arr
 
@@ -126,14 +130,14 @@ def morph(src, dst, lines_src, lines_dst, n_images, DEBUG=False, SAVE_IM=False):
 if __name__ == "__main__":
     mode = False
     if mode:
-        img1 = cv2.imread("Figuras/cl.jpg")
-        img2 = cv2.imread("Figuras/sq.jpg")
-        line_file = "Figuras/lines.txt"
+        img1 = cv2.imread("cats/cat1.jpg")
+        img2 = cv2.imread("cats/cat2.jpg")
+        line_file = "cats/linesB.txt"
     else:
-        img1 = cv2.imread("Caras/couple0.jpg", cv2.IMREAD_COLOR)
-        img2 = cv2.imread("Caras/couple1.jpg", cv2.IMREAD_COLOR)
-        line_file = "Caras/lines.txt"
+        img1 = cv2.imread("faces/face1.jpg", cv2.IMREAD_COLOR)
+        img2 = cv2.imread("faces/face2.jpg", cv2.IMREAD_COLOR)
+        line_file = "faces/linesB.txt"
 
     start_time = time.process_time()
-    create_morphing_video(img1, img2, line_file, 10, DEBUG=True, SAVE_IM=True)
+    create_morphing_video(img1, img2, line_file, 50, DEBUG=True, SAVE_IM=True)
     print("--- %.2f seconds ---" % (time.process_time() - start_time))

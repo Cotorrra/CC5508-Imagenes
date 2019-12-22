@@ -1,6 +1,9 @@
 import numpy as np
 import os
 
+A = 1
+B = 1
+P = 0.5
 
 def interpolate_lines(lines1, lines2, t):
     """
@@ -101,7 +104,7 @@ def dist_point_line(point, u, v, p, q):
         return norm(point - q)
 
 
-def calculate_weight(point, u, v, p, q, A, B, P):
+def calculate_weight(point, u, v, p, q):
     dist = dist_point_line(point, u, v, p, q)
     length = norm(p - q)
     return np.power(np.divide(np.power(length, P), A + dist), B)
