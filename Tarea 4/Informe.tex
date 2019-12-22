@@ -24,12 +24,12 @@ joaquin.perez.a@ug.uchile.cl}}
 \maketitle
 
 \begin{abstract}
-	
+	En este documento se aborda el tema del \textit{morphing}, una técnica de mezclado de imágenes la cual consiste en crear un proceso de metamorfosis entre una imagen y otra, también se muestra una implementación realizada a la par con este informe con resultados utilizando diferentes imágenes.
 \end{abstract}
  
 
 \section*{Introducción} % ***Así la cosa no me molesta con los numeritos***
-	El \textit{morphing} un tipo de efecto visual el cual se produce al cambiar una imagen a otra con un efecto de metamorfosis, actualmente se utiliza principalmente para el entretenimiento. En este documento se implementará el algoritmo descrito por Beier-Neely\cite{Paper}, que consiste en utilizar líneas de correspondencia entre la imagen de partida y la imagen de destino para describir la forma en que la mutación se va a llevar a cabo. Primero se describirá el diseño en la implementación
+	El \textit{morphing} un tipo de efecto visual el cual se produce al cambiar una imagen a otra con un efecto de metamorfosis, actualmente se utiliza principalmente para el entretenimiento. En este documento se implementará el algoritmo descrito por Beier-Neely\cite{Paper}, que consiste en utilizar líneas de correspondencia entre la imagen de partida y la imagen de destino para describir la forma en que la mutación se va a llevar a cabo. Primero se describirá el diseño en la implementación, qué partes del algoritmo se implementaron y de qué forma, luego se probará éste código con diferentes dos muestras con distintos tipos de líneas para observar qué lineas son las mejores para este algoritmo. Para finalizar con las observaciones y conclusiones de dichos experimentos.
 	
 	
 \section*{Diseño e Implementación}
@@ -81,23 +81,74 @@ joaquin.perez.a@ug.uchile.cl}}
 	Luego de finalizado la creación de la colección de imágenes del morphing, se utiliza la librería de OPENCV para formar un vídeo con éstas, en esta implementación, los vídeos generados están a 10 cuadros por segundo y en formato \texttt{.avi}.
 
 
+
 \section*{Experimentación}
-	Se realizaron pruebas con dos pares de imágenes: Una con un par con dos felinos distinos, un puma y una leona, y la otra con un par de dos actores famosos. Para prueba se crearon 3 conjuntos de líneas, uno con líneas de contorno (véase las líneas verdes en la figura 1), uno con líneas de expresión (las líneas azules en la misma figura) y por último uno con ambas líneas en conjunto.
+	Se realizaron pruebas con dos pares de imágenes: Una con un par con dos felinos distinos, un puma y una leona, y la otra con un par de un mismo actor. Para prueba se crearon 3 conjuntos de líneas, uno con líneas de contorno (véase las líneas verdes en la figura 1), uno con líneas de expresión (las líneas azules en la misma figura) y por último uno con ambas líneas en conjunto.
 	
 \begin{figure}[H]
 \begin{multicols}{2}
     \centering
-    \includegraphics[width=0.98\linewidth]{cats/cat1 lines.jpg} \par
-    \includegraphics[width=0.98\linewidth]{faces/face1 lines.jpg} \par
-    \includegraphics[width=0.98\linewidth]{cats/cat2 lines.jpg} \par
-    \includegraphics[width=0.98\linewidth]{faces/face2 lines.jpg} \par
+    \includegraphics[width=0.98\linewidth]{cats/1 lines.jpg} \par
+    \includegraphics[width=0.98\linewidth]{faces/1 lines.jpg} \par
+    \includegraphics[width=0.98\linewidth]{cats/2 lines.jpg} \par
+    \includegraphics[width=0.98\linewidth]{faces/2 lines.jpg} \par
 \end{multicols}
 \caption{Imágenes usadas para la experimentación, están marcadas las líneas utilizadas para el Morphing, las verdes corresponden a contornos de la figura mientras que las azules corresponden a características intrínsecas de la imagen. Las imágenes de la izquierda corresponden a las de fuente mientras que las de la derecha corresponden a las de destino.}
 \end{figure}
 	
 	Para cada prueba, se ejecutó la implementación requiriendo 50 imágenes en total, de las cuales, por motivos de simplicidad, sólo se presentarán la $1^{ra}, 10^{ma}, 20^{va}, 30^{va}, 40^{va}$ y $50^{va}$ imagen de dichas ejecuciones, sin embargo dentro del directorio de la implementación estarán las pruebas con sus respectivas imágenes y vídeos.
 	De aquí en adelante, se mencionará como imágenes verdes, las imágenes que fueron creadas a partir del conjunto de líneas verdes, e imágenes azules de forma análoga. 
-	
+
+
+	\subsection*{Imágenes de Caras}
+\begin{figure}[H]
+\begin{multicols}{3}
+    \centering
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img01.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img30.png} \par
+    
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img10.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img40.png} \par
+
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img20.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img50.png} \par
+\end{multicols}
+\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{multicols}{3}
+    \centering
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img01.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img30.png} \par
+    
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img10.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img40.png} \par
+
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img20.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img50.png} \par
+\end{multicols}
+\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
+\end{figure}
+
+\begin{figure}[H]
+\begin{multicols}{3}
+    \centering
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img01.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img30.png} \par
+    
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img10.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img40.png} \par
+
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img20.png} \par
+    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img50.png} \par
+\end{multicols}
+\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
+\end{figure}
+
+
+
 	\subsection*{Imágenes de Felinos}
 \begin{figure}[H]
 \begin{multicols}{3}
@@ -147,52 +198,41 @@ joaquin.perez.a@ug.uchile.cl}}
 	Con el conjunto de imágenes obtenidas con los diferentes experimentos se observa que en las imágenes creadas usando las líneas verdes (de contorno), la imagen inicial se dobla para hacer calzar las orejas de ambos felinos, creando así una aparcición de las orejas más armoniosa que en el caso de las imágenes creadas utilizando sólo las líneas azules, sin embargo, el conjunto de imágenes verdes presenta discordancias con las facciones de la cara de los felinos, éstas son más aparentes en la cuarta imagen (la primera de la segunda fila), donde se evidencian éstas en ojos y en nariz. Estos dos detalles no están presentes en las imágenes que usan todas las líneas.
 
 
-	\subsection*{Imágenes de Caras}
+
+
+
+	
+	\subsection{Errores}
+	
+	Mientras el desarrollo de los experimentos empezaban se obtuvieron resultados dignos de notar: \\
+		
 \begin{figure}[H]
 \begin{multicols}{3}
     \centering
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img01.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img30.png} \par
-    
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img10.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img40.png} \par
-
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img20.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/G/img50.png} \par
+    \includegraphics[width=0.65\linewidth]{errors/01/img01.png} \par
+    \includegraphics[width=0.65\linewidth]{errors/01/1 lines.jpg} \par
+    \includegraphics[width=0.65\linewidth]{errors/01/2 lines.jpg} \par
+   
 \end{multicols}
-\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
-\end{figure}
-
-
+\caption{Morphing creado con las imagenes y líneas de la derecha a ésta.}
+\end{figure}	
+	
+	Dentro de la experimentación queda en evidencia que la elección de líneas no es trivial, considerando la figura, ahí que la elección de líneas muy cercanas entre unas y otras afectan gravemente determinadas zonas, en el caso de la figura anterior la zona de los ojos.
+		
+	También se puede evidenciar en el siguiente ejemplo, que hay que utilizar una cantidad mínima de líneas para indicar una misma línea. Dado que el alto número de líneas para describir el borde de ambas caras causa altas anomalías.
 \begin{figure}[H]
 \begin{multicols}{3}
     \centering
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img01.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img30.png} \par
     
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img10.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img40.png} \par
-
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img20.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/B/img50.png} \par
+    \includegraphics[width=0.65\linewidth]{errors/02/img01.png} \par
+    \includegraphics[width=0.65\linewidth]{errors/02/1 lines.jpg} \par 
+    \includegraphics[width=0.65\linewidth]{errors/02/2 lines.jpg} \par
+   
 \end{multicols}
-\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
-\end{figure}
-
-\begin{figure}[H]
-\begin{multicols}{3}
-    \centering
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img01.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img30.png} \par
-    
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img10.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img40.png} \par
-
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img20.png} \par
-    \includegraphics[width=1.0\linewidth]{TestsFaces/XL/img50.png} \par
-\end{multicols}
-\caption{Imágenes creadas con la implementación y con ambos pares de líneas. El progreso va de izquierda a derecha de arriba hacia abajo.}
-\end{figure}
+\caption{Morphing creado con las imagenes y líneas de la derecha a ésta.}
+\end{figure}	
+	
+	Estos errores permitieron realizar una mejor selección de líneas para las pruebas mostradas en la primera parte de esta sección.
 
 \section*{Conclusión}
 	El uso de líneas de contorno (verdes) y líneas de características internas (azules) permiten obtener un \textit{morphing} con pocos errores de discordancias, sin embargo, resulta aún más efectivo combinar ambos tipos de líneas. Desafortunadamente esta técnica se vuelve mucho más lenta con cada línea adicional que se agrega, dado que se deben realizar una iteración de \textit{warping} más para obtener la contribución de ésta línea a los puntos de la imagen de destino, por lo que agregar tanto como líneas de contorno como líneas de características internas tendrán un costo importante en el tiempo de ejecución. De esta forma se tiene que priorizar qué líneas se deben incluir si se está buscando el balance entre errores y tiempo de ejecución.

@@ -2,14 +2,20 @@ import cv2
 from util import *
 import time
 
-# Constantes para el calculo de peso
 
+def create_morphing_video(src, dst, point_filename, n_images, STATUS=False, SAVE_IM=False):
+    """
+    Crea un video según el morphing de dos imagenes con sus puntos determinados y la cantidad de imagenes pedidas.
+    El Video es a 10 cuadros por segundo
+    :param src: Imagen Fuente
+    :param dst: Imagen Destino
+    :param point_filename: Ubiación del archivo de texto donde están los puntos
+    :param n_images: Numero de imagenes que tendrá el video
+    :param STATUS: Si quiere que se imprima información respecto a la ejecución de esta función
+    :param SAVE_IM: Si se quiere o no guardar todas las imágenes creadas para la creación del vídeo.
+    :return:
+    """
 
-
-# (length^p / (A + dist))^ b
-
-
-def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_IM=False):
     src = src.astype('uint8')
     dst = dst.astype('uint8')
 
@@ -19,7 +25,7 @@ def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_
     lines_dst = np.zeros((len(file_lines), 4))
 
     for i in range(len(file_lines)):
-        if DEBUG:
+        if STATUS:
             print("Reading Lines... " + str(int(100 * (i + 1) / (len(file_lines) + 1))) + "%")
         line = file_lines[i]
         line = line.split(" ")
@@ -32,19 +38,19 @@ def create_morphing_video(src, dst, point_filename, n_images, DEBUG=False, SAVE_
     if SAVE_IM and not os.path.exists("Images/"):
         os.makedirs("Images/")
 
-    if DEBUG:
+    if STATUS:
         print("Starting Morphing...")
 
-    collection = morph(src, dst, lines_src, lines_dst, n_images, DEBUG, SAVE_IM)
+    collection = morph(src, dst, lines_src, lines_dst, n_images, STATUS, SAVE_IM)
 
-    if DEBUG:
+    if STATUS:
         print("Morphing is complete!")
 
     shape = (src.shape[1], src.shape[0])
     out = cv2.VideoWriter("morphing.avi",
                           cv2.VideoWriter_fourcc(*'XVID'), 10, shape)
 
-    if DEBUG:
+    if STATUS:
         print("Creating video...")
 
     for image in collection:
@@ -108,7 +114,18 @@ def wrap(img_src, lines_src, lines_dst):
     return result
 
 
-def morph(src, dst, lines_src, lines_dst, n_images, DEBUG=False, SAVE_IM=False):
+def morph(src, dst, lines_src, lines_dst, n_images, STATUS=False, SAVE_IM=False):
+    """
+    Crea un arreglo de imágenes que corresponde al proceso de morphing entre dos imagenes y lo retorna.
+    :param src: Imagen de Fuente
+    :param dst: Imagen de Destino
+    :param lines_src: lineas de correspondencia de la imagen fuente
+    :param lines_dst: lineas de correspondencia de la imagen de destino
+    :param n_images: numero de imagenes a crear, largo del arreglo a retornar
+    :param STATUS: Si se quiere saber sobre el estado del progerso de esta funcion en consola
+    :param SAVE_IM: Si se quiere guardar o no las imagenes de este arreglo al ser creado.
+    :return:
+    """
     arr = []
     for i in range(n_images):
         t = np.divide(i, (n_images - 1))
@@ -121,23 +138,20 @@ def morph(src, dst, lines_src, lines_dst, n_images, DEBUG=False, SAVE_IM=False):
         arr.append(morph_image)
         if SAVE_IM:
             cv2.imwrite("Images/img" + itos(i + 1) + ".png", morph_image)
-        if DEBUG:
+        if STATUS:
             print("Processing Images... " + str(int(100 * (i + 1) / n_images)) + "%")
 
     return arr
 
 
 if __name__ == "__main__":
-    mode = False
-    if mode:
-        img1 = cv2.imread("cats/cat1.jpg")
-        img2 = cv2.imread("cats/cat2.jpg")
-        line_file = "cats/linesB.txt"
-    else:
-        img1 = cv2.imread("faces/face1.jpg", cv2.IMREAD_COLOR)
-        img2 = cv2.imread("faces/face2.jpg", cv2.IMREAD_COLOR)
-        line_file = "faces/linesB.txt"
+    mode = "faces"  # "faces" or "cats"
+    lines = "G"   # "XL", "G" or "B"
+
+    img1 = cv2.imread(mode+"/1.jpg")
+    img2 = cv2.imread(mode+"/2.jpg")
+    line_file = mode+"/lines"+lines+".txt"
 
     start_time = time.process_time()
-    create_morphing_video(img1, img2, line_file, 50, DEBUG=True, SAVE_IM=True)
+    create_morphing_video(img1, img2, line_file, 50, STATUS=True, SAVE_IM=True)
     print("--- %.2f seconds ---" % (time.process_time() - start_time))
