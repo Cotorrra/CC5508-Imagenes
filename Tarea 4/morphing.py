@@ -35,8 +35,9 @@ def create_morphing_video(src, dst, point_filename, n_images, STATUS=False, SAVE
     file.close()
 
     # Crea una carpeta donde se guardan todas las imagenes creadas por el morphing.
+    # Si no se hace esto las imagenes no se guardan.
     if SAVE_IM and not os.path.exists("Images/"):
-        os.makedirs("Images/")
+        os.makedirs("images/")
 
     if STATUS:
         print("Starting Morphing...")
@@ -47,7 +48,7 @@ def create_morphing_video(src, dst, point_filename, n_images, STATUS=False, SAVE
         print("Morphing is complete!")
 
     shape = (src.shape[1], src.shape[0])
-    out = cv2.VideoWriter("morphing.avi",
+    out = cv2.VideoWriter("morphing2.avi",
                           cv2.VideoWriter_fourcc(*'XVID'), 10, shape)
 
     if STATUS:
@@ -137,7 +138,7 @@ def morph(src, dst, lines_src, lines_dst, n_images, STATUS=False, SAVE_IM=False)
         morph_image = morph_image.astype('uint8')
         arr.append(morph_image)
         if SAVE_IM:
-            cv2.imwrite("Images/img" + itos(i + 1) + ".png", morph_image)
+            cv2.imwrite("images/img" + itos(i + 1) + ".png", morph_image)
         if STATUS:
             print("Processing Images... " + str(int(100 * (i + 1) / n_images)) + "%")
 
@@ -146,12 +147,12 @@ def morph(src, dst, lines_src, lines_dst, n_images, STATUS=False, SAVE_IM=False)
 
 if __name__ == "__main__":
     mode = "faces"  # "faces" or "cats"
-    lines = "G"   # "XL", "G" or "B"
+    lines = "XL"   # "XL", "G" or "B"
 
     img1 = cv2.imread(mode+"/1.jpg")
     img2 = cv2.imread(mode+"/2.jpg")
     line_file = mode+"/lines"+lines+".txt"
 
     start_time = time.process_time()
-    create_morphing_video(img1, img2, line_file, 50, STATUS=True, SAVE_IM=True)
+    create_morphing_video(img1, img2, line_file, 10, STATUS=True, SAVE_IM=False)
     print("--- %.2f seconds ---" % (time.process_time() - start_time))

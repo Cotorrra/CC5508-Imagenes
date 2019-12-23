@@ -1,1 +1,0 @@
-Aquí los vídeos están con diferentes fps, pero los 3 consideran las 50 imágenes con las que se encuentran.

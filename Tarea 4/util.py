@@ -1,6 +1,7 @@
 import numpy as np
 import os
 
+# Numeros para el calculo del weight
 A = 1
 B = 1
 P = 0.5
